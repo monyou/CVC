@@ -3,7 +3,8 @@ const path = require("path");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const compression = require("compression");
-const apiRouter = require("./api-routing");
+const errorHandler = require("./helpers/error-handler");
+const apiRouter = require("./api/api-routing");
 
 const app = express();
 // Static Middleware
@@ -36,15 +37,11 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Initialize firebase communications
-const admin = require("firebase-admin");
-const serviceAccount = require("./serviceAccountKey.json");
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+// Global error handler
+app.use(errorHandler);
 
 // Start server and listen on port
-var port = process.env.PORT || 3117;
+var port = process.env.PORT || 8000;
 app.use("/api", apiRouter);
 app.listen(port);
 console.log("Magic happens on port " + port);
