@@ -5,7 +5,14 @@ const {
   v4: uuidv4
 } = require("uuid");
 
-const { encrypt } = require('../../crypto');
+const {
+  encrypt
+} = require('../../crypto');
+
+
+const {
+  mailer
+} = require('../../helpers/mailer');
 
 async function getUserById({
   id
@@ -76,6 +83,21 @@ async function createUser({
       isActive: true,
       isEmailConfirmed: false,
       vacations: []
+    });
+
+    var mailOptions = {
+      from: 'srednogortsi@gmail.com',
+      to: email,
+      subject: 'Account Created Successfully',
+      text: 'Congrats!'
+    };
+
+    mailer.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log('Email sent: ' + info.response);
+      }
     });
 
     return {
