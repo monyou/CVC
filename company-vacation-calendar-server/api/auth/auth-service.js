@@ -4,6 +4,8 @@ const {
     firestore
 } = require("../../helpers/firebase");
 
+const { decrypt } = require('../../crypto');
+
 async function authenticate({
     email,
     password
@@ -13,9 +15,7 @@ async function authenticate({
         const user = userQuery.docs[0].data();
 
         if (user !== null) {
-
-            // TODO: Add password hash decoder
-
+            user.password = decrypt(user.password);
             if (user.password == password) {
                 const token = jwt.sign({
                         sub: user.id,

@@ -5,6 +5,8 @@ const {
   v4: uuidv4
 } = require("uuid");
 
+const { encrypt } = require('../../crypto');
+
 async function getUserById({
   id
 }) {
@@ -54,6 +56,7 @@ async function createUser({
 }) {
   try {
     let id = uuidv4();
+    password = encrypt(password);
     await firestore.collection("users").doc(id).set({
       id,
       email,
