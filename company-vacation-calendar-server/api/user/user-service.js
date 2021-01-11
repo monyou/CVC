@@ -52,11 +52,19 @@ async function createUser({
   password,
   firstName,
   lastName,
-  role
+  roleName,
+  companyName
 }) {
   try {
-    let id = uuidv4();
+    const id = uuidv4();
     password = encrypt(password);
+
+    const roleQuery = await firestore.collection("roles").where("name", "==", roleName).get();
+    const role = roleQuery.docs[0].data();
+
+    const companyQuery = await firestore.collection("companies").where("name", "==", companyName).get();
+    const company = companyQuery.docs[0].data();
+
     await firestore.collection("users").doc(id).set({
       id,
       email,
@@ -64,6 +72,10 @@ async function createUser({
       firstName,
       lastName,
       role,
+      company,
+      isActive: true,
+      isEmailConfirmed: false,
+      vacations: []
     });
 
     return {
