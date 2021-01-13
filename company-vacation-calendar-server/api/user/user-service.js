@@ -83,7 +83,7 @@ async function createUser({
     });
 
     const mailOptions = {
-      from: 'srednogortsi@gmail.com',
+      from: process.env.EMAIL_SERVICE_AUTH_EMAIL,
       to: email,
       subject: 'Account Created Successfully',
       text: 'Congrats!'
