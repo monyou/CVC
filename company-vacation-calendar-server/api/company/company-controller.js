@@ -4,7 +4,7 @@ const companyService = require("./company-service");
 
 router.get("/company/getAll", (req, res, next) => {
     companyService
-        .getAllCompanies(req.body)
+        .getAllCompanies()
         .then((companies) => res.json(companies))
         .catch((err) => next(err));
 });

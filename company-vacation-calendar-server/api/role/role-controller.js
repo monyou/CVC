@@ -4,7 +4,7 @@ const roleService = require("./role-service");
 
 router.get("/role/getAll", (req, res, next) => {
     roleService
-        .getAllRoles(req.body)
+        .getAllRoles()
         .then((roles) => res.json(roles))
         .catch((err) => next(err));
 });

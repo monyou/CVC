@@ -12,7 +12,7 @@ router.get("/user/getById", (req, res, next) => {
 
 router.get("/user/getAll", (req, res, next) => {
     userService
-        .getAllUsers(req.body)
+        .getAllUsers()
         .then((users) => res.json(users))
         .catch((err) => next(err));
 });

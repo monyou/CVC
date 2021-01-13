@@ -4,7 +4,7 @@ const vacationTypeService = require("./vacation-type-service");
 
 router.get("/vacation-type/getAll", (req, res, next) => {
     vacationTypeService
-        .getAllVacationTypes(req.body)
+        .getAllVacationTypes()
         .then((vacationTypes) => res.json(vacationTypes))
         .catch((err) => next(err));
 });
