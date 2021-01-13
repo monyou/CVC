@@ -36,10 +36,6 @@ app.use(function (req, res, next) {
 // Global error handler
 app.use(errorHandler);
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
-
 // Start server and listen on port
 var port = process.env.PORT || 8000;
 app.use("/api", apiRouter);
