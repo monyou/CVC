@@ -4,12 +4,9 @@ const {
 const {
   v4: uuidv4
 } = require("uuid");
-
 const {
   encrypt
-} = require('../../crypto');
-
-
+} = require('../../helpers/crypto');
 const {
   mailer
 } = require('../../helpers/mailer');
@@ -64,7 +61,7 @@ async function createUser({
 }) {
   try {
     const id = uuidv4();
-    password = encrypt(password);
+    let encryptedPassword = encrypt(password);
 
     const roleQuery = await firestore.collection("roles").where("name", "==", roleName).get();
     const role = roleQuery.docs[0].data();
@@ -75,7 +72,7 @@ async function createUser({
     await firestore.collection("users").doc(id).set({
       id,
       email,
-      password,
+      password: encryptedPassword,
       firstName,
       lastName,
       role,
@@ -85,7 +82,7 @@ async function createUser({
       vacations: []
     });
 
-    var mailOptions = {
+    const mailOptions = {
       from: 'srednogortsi@gmail.com',
       to: email,
       subject: 'Account Created Successfully',
