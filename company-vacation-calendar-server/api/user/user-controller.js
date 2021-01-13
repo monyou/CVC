@@ -24,4 +24,11 @@ router.post("/user/create", (req, res, next) => {
         .catch((err) => next(err));
 });
 
+router.put("/user/activate", (req, res, next) => {
+    userService
+        .activateUser(req.body)
+        .then((result) => res.json(result))
+        .catch((err) => next(err));
+});
+
 module.exports = router;

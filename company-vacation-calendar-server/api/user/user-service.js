@@ -11,6 +11,10 @@ const {
   mailer
 } = require('../../helpers/mailer');
 
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
+
 async function getUserById({
   id
 }) {
@@ -53,7 +57,6 @@ async function getAllUsers() {
 
 async function createUser({
   email,
-  password,
   firstName,
   lastName,
   roleName,
@@ -61,7 +64,8 @@ async function createUser({
 }) {
   try {
     const id = uuidv4();
-    let encryptedPassword = encrypt(password);
+    const securityKey = uuidv4();
+    let encryptedPassword = encrypt(id);
 
     const roleQuery = await firestore.collection("roles").where("name", "==", roleName).get();
     const role = roleQuery.docs[0].data();
@@ -79,11 +83,12 @@ async function createUser({
       company,
       isActive: true,
       isEmailConfirmed: false,
+      securityKey,
       vacations: []
     });
 
     const mailOptions = {
-      from: 'srednogortsi@gmail.com',
+      from: process.env.EMAIL_SERVICE_AUTH_EMAIL,
       to: email,
       subject: 'Account Created Successfully',
       text: 'Congrats!'
@@ -105,8 +110,35 @@ async function createUser({
   }
 }
 
+async function activateUser({
+  id,
+  password,
+  securityKey
+}) {
+  try {
+    const userQuery = await firestore.collection("users").doc(id).get();
+    const user = userQuery.data();
+
+    if (user.securityKey == securityKey) {
+      const encryptedPassword = encrypt(password);
+      
+      await firestore.collection("users").doc(id).update({
+        password: encryptedPassword,
+        isEmailConfirmed: true,
+      })
+
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return false;
+}
+
 module.exports = {
   createUser,
   getAllUsers,
-  getUserById
+  getUserById,
+  activateUser
 };
