@@ -121,7 +121,7 @@ async function activateUser({
 
     if (user.securityKey == securityKey) {
       const encryptedPassword = encrypt(password);
-      
+
       await firestore.collection("users").doc(id).update({
         password: encryptedPassword,
         isEmailConfirmed: true,
