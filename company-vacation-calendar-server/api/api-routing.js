@@ -1,18 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const Role = require("../helpers/roles");
-const authorize = require("../helpers/authorize");
-const userService = require("./auth/users-service");
+const authController = require("./auth/auth-controller");
+const userController = require("./user/user-controller");
 
-router.post("/authenticate", (req, res, next) => {
-  userService
-    .authenticate(req.body)
-    .then((user) =>
-      user
-        ? res.json(user)
-        : res.status(400).json({ message: "Wrong credentials!" })
-    )
-    .catch((err) => next(err));
-});
+router.use("/", authController);
+router.use("/", userController);
 
 module.exports = router;

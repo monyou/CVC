@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const compression = require("compression");
 const errorHandler = require("./helpers/error-handler");
@@ -13,9 +12,6 @@ app.use(express.static(path.join(__dirname, "public")));
 // View Engine Setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
-
-// Log every request to the console
-app.use(morgan("dev"));
 
 // Compress requests size
 app.use(compression());
