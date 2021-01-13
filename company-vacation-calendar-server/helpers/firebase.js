@@ -7,4 +7,5 @@ admin.initializeApp({
 
 module.exports = {
   firestore: admin.firestore(),
+  admin: admin.firestore,
 };
