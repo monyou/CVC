@@ -17,9 +17,13 @@ app.set("view engine", "ejs");
 app.use(compression());
 
 // Accept bodies like application/x-www-form-urlencoded, application/json, application/vnd.api+json
-app.use(bodyParser.urlencoded({ extended: "true" }));
+app.use(bodyParser.urlencoded({
+  extended: "true"
+}));
 app.use(bodyParser.json());
-app.use(bodyParser.json({ type: "application/vnd.api+json" }));
+app.use(bodyParser.json({
+  type: "application/vnd.api+json"
+}));
 
 //Allow cross origin requests
 app.use(function (req, res, next) {
