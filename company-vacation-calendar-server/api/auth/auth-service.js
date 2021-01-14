@@ -21,6 +21,7 @@ async function authenticate({
                 const token = jwt.sign({
                         sub: user.id,
                         role: user.role,
+                        company: user.company,
                         email: user.email,
                         name: `${user.firstName} ${user.lastName}`
                     },

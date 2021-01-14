@@ -1,5 +1,6 @@
 const {
-  firestore
+  firestore,
+  admin
 } = require("../../helpers/firebase");
 const {
   v4: uuidv4
@@ -84,6 +85,7 @@ async function createUser({
       isActive: true,
       isEmailConfirmed: false,
       securityKey,
+      vacationLimit: company.yearVacationLimit,
       vacations: []
     });
 
@@ -136,9 +138,60 @@ async function activateUser({
   return false;
 }
 
+async function addUserVacation({
+  userId,
+  vacation
+}) {
+  try {
+    const userQuery = await firestore.collection("users").doc(userId).get();
+    const user = userQuery.data();
+
+    if (user) {
+      await firestore.collection("users").doc(userId).update({
+        vacations: admin.FieldValue.arrayUnion(vacation)
+      });
+
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return false;
+}
+
+async function updateUserVacation({
+  vacation
+}) {
+  try {
+    const userQuery = await firestore.collection("users").doc(vacation.userId).get();
+    const user = userQuery.data();
+
+    if (user) {
+      let oldVacation = user.vacations.filter(vac => vac.id === vacation.id)[0];
+
+      await firestore.collection("users").doc(vacation.userId).update({
+        vacations: admin.FieldValue.arrayRemove(oldVacation)
+      });
+
+      await firestore.collection("users").doc(vacation.userId).update({
+        vacations: admin.FieldValue.arrayUnion(vacation)
+      });
+
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return false;
+}
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
-  activateUser
+  activateUser,
+  addUserVacation,
+  updateUserVacation
 };
