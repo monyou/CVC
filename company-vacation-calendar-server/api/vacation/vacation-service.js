@@ -24,7 +24,19 @@ async function getAllVacations() {
 async function getVacationById({
     id
 }) {
+    try {
+        const response = await userService.getAllUsers();
 
+        vacations = response.users.filter(user => user.vacations.length !== 0).map(user => user.vacations).flat();
+        vacation = vacations.filter(vacation => vacation.id === id)[0];
+        if (vacation) {
+            return vacation;
+        }
+    } catch (error) {
+        console.log(error);
+    }
+
+    return null;
 }
 
 async function getVacationsByUserId({
@@ -62,6 +74,7 @@ async function getVacationsByCompanyId({
 async function createVacation({
     userId,
     username,
+    description,
     vacationType,
     days
 }) {
@@ -76,6 +89,7 @@ async function createVacation({
             const vacation = {
                 id,
                 username,
+                description,
                 vacationType,
                 days,
                 status: statuses.Pending,
@@ -95,9 +109,31 @@ async function createVacation({
 }
 
 async function updateVacation({
-    companyId
+    id,
+    description,
+    vacationType,
+    days,
+    status,
 }) {
+    let result = false;
+    try {
+        let vacation = await getVacationById({
+            id
+        });
 
+        vacation.description = description != null ? description : vacation.description;
+        vacation.vacationType = vacationType != null ? vacationType : vacation.vacationType;
+        vacation.days = days != null ? days : vacation.days;
+        vacation.status = status != null ? status : vacation.status;
+
+        result = await userService.updateUserVacation({
+            vacation
+        });
+    } catch (error) {
+        console.log(error);
+    }
+
+    return result;
 }
 
 module.exports = {

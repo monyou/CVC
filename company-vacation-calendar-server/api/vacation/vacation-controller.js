@@ -30,4 +30,18 @@ router.get("/vacation/getVacationsByCompanyId", (req, res, next) => {
         .catch((err) => next(err));
 });
 
+router.get("/vacation/getById", (req, res, next) => {
+    vacationService
+        .getVacationById(req.query)
+        .then((vacation) => res.json(vacation))
+        .catch((err) => next(err));
+});
+
+router.put("/vacation/update", (req, res, next) => {
+    vacationService
+        .updateVacation(req.body)
+        .then((vacation) => res.json(vacation))
+        .catch((err) => next(err));
+});
+
 module.exports = router;

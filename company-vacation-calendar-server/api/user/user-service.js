@@ -1,5 +1,6 @@
 const {
-  firestore, admin
+  firestore,
+  admin
 } = require("../../helpers/firebase");
 const {
   v4: uuidv4
@@ -159,10 +160,38 @@ async function addUserVacation({
   return false;
 }
 
+async function updateUserVacation({
+  vacation
+}) {
+  try {
+    const userQuery = await firestore.collection("users").doc(vacation.userId).get();
+    const user = userQuery.data();
+
+    if (user) {
+      let oldVacation = user.vacations.filter(vac => vac.id === vacation.id)[0];
+
+      await firestore.collection("users").doc(vacation.userId).update({
+        vacations: admin.FieldValue.arrayRemove(oldVacation)
+      });
+
+      await firestore.collection("users").doc(vacation.userId).update({
+        vacations: admin.FieldValue.arrayUnion(vacation)
+      });
+
+      return true;
+    }
+  } catch (error) {
+    console.log(error);
+  }
+
+  return false;
+}
+
 module.exports = {
   createUser,
   getAllUsers,
   getUserById,
   activateUser,
-  addUserVacation
+  addUserVacation,
+  updateUserVacation
 };
