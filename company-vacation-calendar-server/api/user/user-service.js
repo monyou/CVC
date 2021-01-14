@@ -11,6 +11,7 @@ const {
 const {
   mailer
 } = require('../../helpers/mailer');
+const statuses = require('../enums/vacation-status');
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config();
@@ -169,14 +170,25 @@ async function updateUserVacation({
 
     if (user) {
       let oldVacation = user.vacations.filter(vac => vac.id === vacation.id)[0];
+      if (vacation.status === statuses.Accepted) {
+        await firestore.collection("users").doc(vacation.userId).update({
+          vacations: admin.FieldValue.arrayRemove(oldVacation)
+        });
 
-      await firestore.collection("users").doc(vacation.userId).update({
-        vacations: admin.FieldValue.arrayRemove(oldVacation)
-      });
+        await firestore.collection("users").doc(vacation.userId).update({
+          vacationLimit: user.vacationLimit - vacation.days.length,
+          vacations: admin.FieldValue.arrayUnion(vacation)
+        });
+      } else {
+        await firestore.collection("users").doc(vacation.userId).update({
+          vacations: admin.FieldValue.arrayRemove(oldVacation)
+        });
 
-      await firestore.collection("users").doc(vacation.userId).update({
-        vacations: admin.FieldValue.arrayUnion(vacation)
-      });
+        await firestore.collection("users").doc(vacation.userId).update({
+          vacations: admin.FieldValue.arrayUnion(vacation)
+        });
+      }
+
 
       return true;
     }
