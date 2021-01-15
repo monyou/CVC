@@ -1,33 +1,42 @@
 const express = require("express");
 const router = express.Router();
 const authorize = require("../../helpers/authorize");
+const roles = require("../../helpers/roles");
 const userService = require("./user-service");
 
-router.get("/user/getById", (req, res, next) => {
+router.get("/user/getById", authorize(), (req, res, next) => {
     userService
         .getUserById(req.query)
-        .then((user) => res.json(user))
+        .then((user) => user ? res.json(user) : res.status(400).json({
+            message: "Unable to get user by id!"
+        }))
         .catch((err) => next(err));
 });
 
-router.get("/user/getAll", (req, res, next) => {
+router.get("/user/getAll", authorize([roles.SuperAdmin]), (req, res, next) => {
     userService
         .getAllUsers()
-        .then((users) => res.json(users))
+        .then((users) => users ? res.json(users) : res.status(400).json({
+            message: "Unable to get all users!"
+        }))
         .catch((err) => next(err));
 });
 
-router.post("/user/create", (req, res, next) => {
+router.post("/user/create", authorize([roles.Admin, roles.SuperAdmin]), (req, res, next) => {
     userService
         .createUser(req.body)
-        .then((id) => res.json(id))
+        .then((id) => id ? res.json(id) : res.status(400).json({
+            message: "Unable to create user!"
+        }))
         .catch((err) => next(err));
 });
 
 router.put("/user/activate", (req, res, next) => {
     userService
         .activateUser(req.body)
-        .then((result) => res.json(result))
+        .then((result) => result ? res.json(result) : res.status(400).json({
+            message: "Unable to activate user!"
+        }))
         .catch((err) => next(err));
 });
 
