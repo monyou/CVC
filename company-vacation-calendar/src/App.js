@@ -1,16 +1,23 @@
-import "styles/App.css";
-import logoCalendar from "assets/logos/calendar.png";
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { RouterConfig } from "./navigation/RouterConfig";
+
+const GlobalContext = React.createContext();
+const initialGlobalState = {
+  user: null,
+  loading: false,
+};
 
 function App() {
+  const [globalState, setGlobalState] = React.useState(initialGlobalState);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logoCalendar} className="App-logo" alt="logo" />
-        <p>Company Vacation Calendar</p>
-        <p>Coming soon</p>
-      </header>
-    </div>
+    <GlobalContext.Provider value={[globalState, setGlobalState]}>
+      <BrowserRouter>
+        <RouterConfig />
+      </BrowserRouter>
+    </GlobalContext.Provider>
   );
 }
 
-export default App;
+export { App, GlobalContext };
