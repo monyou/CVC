@@ -1,23 +1,22 @@
 import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { RouterConfig } from "./navigation/RouterConfig";
+import { Provider } from "react-redux";
+import { store } from "./redux/store";
+import { STORE_STATE_NAME } from "./redux/CONSTANTS";
 
-const GlobalContext = React.createContext();
-const initialGlobalState = {
-  user: null,
-  loading: false,
-};
+store.subscribe(() => {
+  localStorage.setItem(STORE_STATE_NAME, JSON.stringify(store.getState()));
+});
 
 function App() {
-  const [globalState, setGlobalState] = React.useState(initialGlobalState);
-
   return (
-    <GlobalContext.Provider value={[globalState, setGlobalState]}>
+    <Provider store={store}>
       <BrowserRouter>
         <RouterConfig />
       </BrowserRouter>
-    </GlobalContext.Provider>
+    </Provider>
   );
 }
 
-export { App, GlobalContext };
+export { App };

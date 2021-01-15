@@ -15,7 +15,7 @@ function Home() {
       routeHistory.replace("/dashboard");
       return;
     }
-  }, [routeHistory]);
+  });
 
   return (
     <div

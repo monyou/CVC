@@ -13,7 +13,7 @@ function login({ email, password }) {
 
 function logout() {
   window.localStorage.removeItem(TOKEN);
-  window.location.assign("/");
+  window.location.assign("/login");
 }
 
 function getToken() {

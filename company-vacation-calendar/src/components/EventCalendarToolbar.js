@@ -58,7 +58,7 @@ function Toolbar(calendarEvent, onNewEventHandler) {
       </div>
       <div>{calendarEvent.label}</div>
       <Button
-        label={isSmallDevice ? "" : "Add Vacation"}
+        label={isSmallDevice ? "" : "New Vacation"}
         icon={isSmallDevice ? "pi pi-calendar" : ""}
         onClick={onNewEventHandler}
       />

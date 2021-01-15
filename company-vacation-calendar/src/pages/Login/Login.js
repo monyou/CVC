@@ -2,30 +2,31 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { getToken, login } from "../../services/auth.service";
-import { GlobalContext } from "../../App";
 import { backgroundSoloPage } from "../../styles/colors";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { centerDivOnScreen, inputErrorMsg } from "../../styles/common";
 import { Formik } from "formik";
+import { connect, useDispatch } from "react-redux";
+import { LOGIN_USER } from "../../redux/CONSTANTS";
 
 function Login() {
+  const dispatch = useDispatch();
   const routeHistory = useHistory();
   const [submitLoginFormError, setSubmitLoginFormError] = React.useState(null);
-  const [globalState, setGlobalState] = React.useContext(GlobalContext);
 
   React.useLayoutEffect(() => {
     if (getToken()) {
       routeHistory.replace("/dashboard");
       return;
     }
-  }, [globalState, setGlobalState, routeHistory]);
+  });
 
   function handleFormSubmit(values, { setSubmitting }) {
     login(values).then(
       (u) => {
-        setGlobalState({ ...globalState, user: u });
+        dispatch({ type: LOGIN_USER, user: u });
         setSubmitting(false);
         routeHistory.push("/dashboard");
       },
@@ -147,4 +148,5 @@ function Login() {
   );
 }
 
+export default connect()(Login);
 export { Login };

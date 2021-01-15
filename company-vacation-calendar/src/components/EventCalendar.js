@@ -20,6 +20,7 @@ function EventCalendar({
       endAccessor={endDateAccessorField}
       style={{ height: "calc(100vh - 100px)", ...styles }}
       view={"month"}
+      views={["month"]}
       popup={true}
       onView
       components={{

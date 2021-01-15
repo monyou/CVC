@@ -42,4 +42,25 @@ function POST(endpoint, data, configs = {}) {
     });
 }
 
-export { GET, POST };
+function PUT(endpoint, data, configs = {}) {
+  return window
+    .fetch(`${baseURL}${endpoint}`, {
+      method: "PUT",
+      body: JSON.stringify(data),
+      headers: {
+        Authorization: getToken() ? `Bearer ${getToken()}` : undefined,
+        "Content-Type": "application/json",
+      },
+      ...configs,
+    })
+    .then(async (response) => {
+      const data = await response.json();
+      if (response.ok) {
+        return data;
+      } else {
+        return Promise.reject(data);
+      }
+    });
+}
+
+export { GET, POST, PUT };

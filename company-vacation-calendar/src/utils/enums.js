@@ -4,6 +4,12 @@ export const roles = {
   User: "User",
 };
 
+export const vacationStatus = {
+  Accepted: "Accepted",
+  Rejected: "Rejected",
+  Pending: "Pending",
+};
+
 export const vacationTypes = {
   Paid: "Paid",
   Unpaid: "Unpaid",
