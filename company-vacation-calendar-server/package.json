@@ -4,7 +4,7 @@
   "description": "Rest API for the purpose of CVC React App",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node index.js"
   },
   "author": "Simeon Mechkov",
   "license": "MIT",
