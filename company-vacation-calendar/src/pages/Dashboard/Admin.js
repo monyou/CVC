@@ -7,7 +7,7 @@ import {
 } from "../../services/vacation.service";
 import { vacationStatus } from "../../utils/enums";
 import { Card } from "primereact/card";
-import { connect, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 function Admin() {
   const store = useSelector((state) => ({ user: state.user }));
@@ -15,14 +15,14 @@ function Admin() {
 
   React.useEffect(() => {
     getAllVacationsByCompany(store.user?.company?.id).then((vacations) => {
-      setState({
-        ...state,
+      setState((s) => ({
+        ...s,
         pendingVacations: vacations.filter(
           (v) => v.status === vacationStatus.Pending
         ),
-      });
+      }));
     });
-  }, []);
+  }, [store.user?.company?.id]);
 
   function handleUpdateVacation(action, vacationId) {
     let requestData = {
@@ -36,15 +36,17 @@ function Admin() {
       case "reject":
         requestData.status = vacationStatus.Rejected;
         break;
+      default:
+        break;
     }
 
     updateVacation(requestData).then((response) => {
-      setState({
-        ...state,
+      setState((s) => ({
+        ...s,
         pendingVacations: state.pendingVacations.filter(
           (v) => v.id !== vacationId
         ),
-      });
+      }));
     });
   }
 
@@ -79,5 +81,4 @@ function Admin() {
   );
 }
 
-export default connect()(Admin);
 export { Admin };

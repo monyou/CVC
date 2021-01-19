@@ -4,18 +4,10 @@ import * as colors from "../../styles/colors";
 import logoCalendar from "../../assets/logos/calendar.png";
 import { useHistory } from "react-router-dom";
 import { Button } from "primereact/button";
-import { getToken } from "../../services/auth.service";
 import { centerDivOnScreen } from "../../styles/common";
 
 function Home() {
   const routeHistory = useHistory();
-
-  React.useLayoutEffect(() => {
-    if (getToken()) {
-      routeHistory.replace("/dashboard");
-      return;
-    }
-  });
 
   return (
     <div

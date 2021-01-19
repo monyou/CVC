@@ -14,7 +14,7 @@ import { inputErrorMsg } from "../../styles/common";
 import { Calendar } from "primereact/calendar";
 import { createVacation } from "../../services/vacation.service";
 import { getAllHolidays } from "../../services/holiday.service";
-import { connect, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 function User() {
   const store = useSelector((state) => ({ user: state.user }));
@@ -27,22 +27,22 @@ function User() {
 
   React.useEffect(() => {
     getAllHolidays().then((response) => {
-      setState({
-        ...state,
+      setState((s) => ({
+        ...s,
         holidays: response.holidays
           .find((h) => h.year === new Date().getFullYear())
           .dates.map((d) => new Date(d)),
-      });
+      }));
     });
 
     getAllVacationTypes().then((response) => {
-      setState({
-        ...state,
+      setState((s) => ({
+        ...s,
         vacationTypes: response.vacationTypes.map((t) => ({
           label: t.name,
           value: t,
         })),
-      });
+      }));
     });
 
     getAllVacationsByCompany(store.user?.company?.id).then((vacations) => {
@@ -56,12 +56,12 @@ function User() {
         )
         .flat();
 
-      setState({
-        ...state,
+      setState((s) => ({
+        ...s,
         vacationsForCompany: calendarTiles,
-      });
+      }));
     });
-  }, []);
+  }, [store.user?.company?.id]);
 
   function handleVacationSubmit(values, { setSubmitting }) {
     const requestModel = {
@@ -73,8 +73,8 @@ function User() {
     };
     createVacation(requestModel).then(
       (response) => {
-        setState({ ...state, showDialog: false });
         setSubmitting(false);
+        setState((s) => ({ ...s, showDialog: false }));
       },
       (error) => {
         setSubmitting(false);
@@ -87,7 +87,7 @@ function User() {
       <EventCalendar
         eventsList={state.vacationsForCompany}
         onNewEvent={(e) => {
-          setState({ ...state, showDialog: true });
+          setState((s) => ({ ...s, showDialog: true }));
         }}
       />
 
@@ -97,7 +97,7 @@ function User() {
         css={{ width: "70vw" }}
         contentStyle={{ maxHeight: "90vh", padding: "10px 25px 40px 25px" }}
         onHide={() => {
-          setState({ ...state, showDialog: false });
+          setState((s) => ({ ...s, showDialog: false }));
         }}
       >
         <Formik
@@ -203,5 +203,4 @@ function User() {
   );
 }
 
-export default connect()(User);
 export { User };

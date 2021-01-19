@@ -1,16 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { connect, useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { PrimeSmallButton as Button } from "../../../components/PrimeSmallButton";
-import { LOGOUT_USER } from "../../../redux/CONSTANTS";
-import {
-  getToken,
-  getUserFromToken,
-  logout,
-} from "../../../services/auth.service";
+import { getToken, getUserFromToken } from "../../../services/auth.service";
+import { logoutUserAction } from "../../../redux/actions/user.action";
 import { isSmallDevice } from "../../../styles/common";
+import { useHistory } from "react-router-dom";
 
 function Header() {
+  const routeHistory = useHistory();
   const store = useSelector((state) => ({ user: state.user }));
   const dispatch = useDispatch();
 
@@ -41,13 +39,12 @@ function Header() {
         icon={isSmallDevice ? "pi pi-sign-out" : ""}
         className="p-button-secondary p-button-raised"
         onClick={() => {
-          dispatch({ type: LOGOUT_USER });
-          logout();
+          dispatch(logoutUserAction());
+          routeHistory.push("/login");
         }}
       />
     </div>
   );
 }
 
-export default connect()(Header);
 export { Header };

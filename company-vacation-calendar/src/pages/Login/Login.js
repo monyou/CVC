@@ -1,38 +1,31 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { getToken, login } from "../../services/auth.service";
+import { login } from "../../services/auth.service";
 import { backgroundSoloPage } from "../../styles/colors";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { centerDivOnScreen, inputErrorMsg } from "../../styles/common";
 import { Formik } from "formik";
-import { connect, useDispatch } from "react-redux";
-import { LOGIN_USER } from "../../redux/CONSTANTS";
+import { useDispatch } from "react-redux";
+import { loginUserAction } from "../../redux/actions/user.action";
 
 function Login() {
   const dispatch = useDispatch();
   const routeHistory = useHistory();
   const [submitLoginFormError, setSubmitLoginFormError] = React.useState(null);
 
-  React.useLayoutEffect(() => {
-    if (getToken()) {
-      routeHistory.replace("/dashboard");
-      return;
-    }
-  });
-
   function handleFormSubmit(values, { setSubmitting }) {
     login(values).then(
       (u) => {
-        dispatch({ type: LOGIN_USER, user: u });
         setSubmitting(false);
+        dispatch(loginUserAction(u));
         routeHistory.push("/dashboard");
       },
       (error) => {
-        setSubmitLoginFormError(error.message);
         setSubmitting(false);
+        setSubmitLoginFormError(error.message);
       }
     );
   }
@@ -69,7 +62,7 @@ function Login() {
             handleSubmit,
             isSubmitting,
           }) => (
-            <form onSubmit={handleSubmit}>
+            <form autoComplete="true" onSubmit={handleSubmit}>
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-inputgroup-addon">
                   <i className="pi pi-envelope"></i>
@@ -148,5 +141,4 @@ function Login() {
   );
 }
 
-export default connect()(Login);
 export { Login };
