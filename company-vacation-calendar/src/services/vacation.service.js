@@ -1,9 +1,7 @@
 import * as backendAPI from "../utils/backend-api";
 
-function getAllVacationsByCompany(companyId) {
-  return backendAPI.GET(
-    `/vacation/getVacationsByCompanyId?companyId=${companyId}`
-  );
+function getAllVacationsByCompany(id) {
+  return backendAPI.GET(`/vacation/getVacationsByCompanyId?companyId=${id}`);
 }
 
 function getAllVacationTypes() {

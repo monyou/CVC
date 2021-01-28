@@ -1,28 +1,56 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
-import { PrimeSmallButton } from "../../components/PrimeSmallButton";
 import {
   getAllVacationsByCompany,
   updateVacation,
 } from "../../services/vacation.service";
 import { vacationStatus } from "../../utils/enums";
-import { Card } from "primereact/card";
 import { useSelector } from "react-redux";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import {
+  deleteUser,
+  getAllUsersByCompanyId,
+} from "../../services/user.service";
+import { TabView, TabPanel } from "primereact/tabview";
+import { VacationRequestsList } from "../../components/VacationRequestsList";
+import { UsersTable } from "../../components/UsersTable";
 
 function Admin() {
   const store = useSelector((state) => ({ user: state.user }));
-  const [state, setState] = React.useState({ pendingVacations: [] });
+  const queryClient = useQueryClient();
 
-  React.useEffect(() => {
-    getAllVacationsByCompany(store.user?.company?.id).then((vacations) => {
-      setState((s) => ({
-        ...s,
-        pendingVacations: vacations.filter(
-          (v) => v.status === vacationStatus.Pending
-        ),
-      }));
-    });
-  }, [store.user?.company?.id]);
+  const { data: allVacations } = useQuery(
+    "all-vacations",
+    () => getAllVacationsByCompany(store.user.company.id),
+    { enabled: !!store.user?.company?.id }
+  );
+  const updateVacationMutation = useMutation(
+    (requestData) => updateVacation(requestData),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries("all-vacations");
+      },
+    }
+  );
+
+  const { data: allCompanyUsers } = useQuery(
+    "all-company-users",
+    () =>
+      getAllUsersByCompanyId(store.user.company.id).then(
+        (response) => response.users
+      ),
+    { enabled: !!store.user?.company?.id }
+  );
+  const deleteUserMutation = useMutation((userId) => deleteUser(userId), {
+    onSuccess: () => {
+      queryClient.invalidateQueries("all-company-users");
+    },
+  });
+
+  const pendingVacations =
+    allVacations?.filter((v) => v.status === vacationStatus.Pending) ?? [];
+
+  const activeCompanyUsers =
+    allCompanyUsers?.filter((u) => u.isActive && u.id !== store.user.sub) ?? [];
 
   function handleUpdateVacation(action, vacationId) {
     let requestData = {
@@ -40,43 +68,29 @@ function Admin() {
         break;
     }
 
-    updateVacation(requestData).then((response) => {
-      setState((s) => ({
-        ...s,
-        pendingVacations: state.pendingVacations.filter(
-          (v) => v.id !== vacationId
-        ),
-      }));
-    });
+    updateVacationMutation.mutate(requestData);
   }
 
   return (
     <div>
-      {state.pendingVacations.map((v) => {
-        return (
-          <Card key={v.id} title={v.username} subTitle={v.vacationType.name}>
-            {v.description}
-            <ul>
-              {v.days.sort().map((d) => {
-                return <li key={d}>{new Date(d).toLocaleDateString("bg")}</li>;
-              })}
-            </ul>
-            <PrimeSmallButton
-              label="Accept"
-              className="p-button-success"
-              icon="pi pi-check"
-              style={{ marginRight: ".25em" }}
-              onClick={() => handleUpdateVacation("accept", v.id)}
-            />
-            <PrimeSmallButton
-              label="Reject"
-              icon="pi pi-times"
-              className="p-button-danger"
-              onClick={() => handleUpdateVacation("reject", v.id)}
-            />
-          </Card>
-        );
-      })}
+      <TabView
+        renderActiveOnly={false}
+        css={{ ".p-tabview-nav": { justifyContent: "center" } }}
+      >
+        <TabPanel header="Requests">
+          <VacationRequestsList
+            pendingVacations={pendingVacations}
+            handleUpdateVacation={handleUpdateVacation}
+          />
+        </TabPanel>
+        <TabPanel header="Calendar">Calendar</TabPanel>
+        <TabPanel header="Employees">
+          <UsersTable
+            users={activeCompanyUsers}
+            removeUser={deleteUserMutation.mutate}
+          />
+        </TabPanel>
+      </TabView>
     </div>
   );
 }

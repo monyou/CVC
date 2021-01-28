@@ -4,9 +4,7 @@ import { Header } from "./Header";
 function MainLayout({ children }) {
   return (
     <>
-      <section id="header">
-        <Header />
-      </section>
+      <Header />
       <section
         id="main"
         css={{

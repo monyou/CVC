@@ -3,12 +3,12 @@ import * as backendAPI from "../utils/backend-api";
 const TOKEN = "AUTH_TOKEN";
 
 function login({ email, password }) {
-  return backendAPI
-    .POST("/auth/token", { email, password })
-    .then((response) => {
-      setToken(response.token);
-      return getUserFromToken(response.token);
-    });
+  const loginBody = JSON.stringify({ email, password });
+
+  return backendAPI.POST("/auth/token", loginBody).then((response) => {
+    setToken(response.token);
+    return getUserFromToken(response.token);
+  });
 }
 
 function logout() {

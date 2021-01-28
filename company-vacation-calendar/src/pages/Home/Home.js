@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import * as colors from "../../styles/colors";
 import logoCalendar from "../../assets/logos/calendar.png";
 import { useHistory } from "react-router-dom";

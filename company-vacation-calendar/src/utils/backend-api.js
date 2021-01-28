@@ -1,6 +1,6 @@
 import { getToken } from "../services/auth.service";
 
-const baseURL = process.env.REACT_APP_API_URL;
+const baseURL = `${process.env.REACT_APP_API_URL}/api`;
 
 function GET(endpoint, configs = {}) {
   return window
@@ -21,14 +21,14 @@ function GET(endpoint, configs = {}) {
     });
 }
 
-function POST(endpoint, data, configs = {}) {
+function POST(endpoint, body, configs = {}) {
   return window
     .fetch(`${baseURL}${endpoint}`, {
       method: "POST",
-      body: JSON.stringify(data),
+      body,
       headers: {
-        Authorization: getToken() ? `Bearer ${getToken()}` : undefined,
         "Content-Type": "application/json",
+        Authorization: getToken() ? `Bearer ${getToken()}` : undefined,
       },
       ...configs,
     })
@@ -42,14 +42,14 @@ function POST(endpoint, data, configs = {}) {
     });
 }
 
-function PUT(endpoint, data, configs = {}) {
+function PUT(endpoint, body, configs = {}) {
   return window
     .fetch(`${baseURL}${endpoint}`, {
       method: "PUT",
-      body: JSON.stringify(data),
+      body,
       headers: {
-        Authorization: getToken() ? `Bearer ${getToken()}` : undefined,
         "Content-Type": "application/json",
+        Authorization: getToken() ? `Bearer ${getToken()}` : undefined,
       },
       ...configs,
     })

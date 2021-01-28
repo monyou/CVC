@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import { backgroundSoloPage } from "../../styles/colors";
 import { centerDivOnScreen } from "../../styles/common";
 

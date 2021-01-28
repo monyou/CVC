@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import { User } from "./User";
 import { Admin } from "./Admin";
 import { SuperAdmin } from "./SuperAdmin";
