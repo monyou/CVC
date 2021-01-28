@@ -5,6 +5,7 @@ import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { PrimeSmallButton } from "./PrimeSmallButton";
 import { isSmallDevice } from "./../styles/common";
+import { confirmDialog } from "primereact/confirmdialog";
 
 function UsersTable({ users, showInfo, addUser, removeUser }) {
   const [globalFilter, setGlobalFilter] = React.useState(null);
@@ -61,7 +62,15 @@ function UsersTable({ users, showInfo, addUser, removeUser }) {
         label={isSmallDevice ? "" : "Remove"}
         icon={isSmallDevice ? "pi pi-user-minus" : ""}
         className="p-button-danger"
-        onClick={() => removeUser(data.id)}
+        onClick={() =>
+          confirmDialog({
+            message: "Do you want to remove this user?",
+            header: "Remove Confirmation",
+            icon: "pi pi-exclamation-triangle",
+            acceptClassName: "p-button-danger",
+            accept: () => removeUser(data.id),
+          })
+        }
       />
     </div>
   );
