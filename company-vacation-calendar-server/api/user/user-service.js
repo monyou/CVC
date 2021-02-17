@@ -2,7 +2,8 @@ const { firestore, admin } = require("../../helpers/firebase");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt } = require("../../helpers/crypto");
 const { mailer } = require("../../helpers/mailer");
-const statuses = require("../enums/vacation-status");
+const statuses = require("../../helpers/vacation-status");
+const roles = require("../../helpers/roles");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -73,6 +74,15 @@ async function createUser({
     const securityKey = uuidv4();
     let encryptedPassword = encrypt(id);
 
+    const userExistsQuery = await firestore
+      .collection("users")
+      .where("email", "==", email)
+      .get();
+
+    if (!userExistsQuery.empty) {
+      return null;
+    }
+
     const roleQuery = await firestore
       .collection("roles")
       .where("name", "==", roleName)
@@ -100,11 +110,15 @@ async function createUser({
       vacations: [],
     });
 
+    const emailContentForAdmin = `Welcome, dear ${firstName} ${lastName}!<br/>We from 'Company Vacation Calendar' platform created a profile for you.<br/><br/>You only have to click this <a href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">LINK</a> and type your password to enjoy the easy process of managing employees applications for leave!<br/><br/>Best wishes,<br/>CVC Team`;
+    const emailContentForUser = `Welcome, dear ${firstName} ${lastName}!<br/>Your manager created a profile in 'Company Vacation Calendar' platform for you.<br/><br/>You only have to click this <a href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">LINK</a> and type your password to enjoy the easy process of applying for leave from work!<br/><br/>Best wishes,<br/>CVC Team`;
+
     const mailOptions = {
       from: process.env.EMAIL_SERVICE_AUTH_EMAIL,
       to: email,
-      subject: "Account Created Successfully",
-      text: "Congrats!",
+      subject: "CVC Platform | Account Created",
+      html:
+        role.name === roles.User ? emailContentForUser : emailContentForAdmin,
     };
 
     mailer.sendMail(mailOptions, function (error, info) {
@@ -125,9 +139,7 @@ async function createUser({
 
 async function deleteUser({ userId }) {
   try {
-    await firestore.collection("users").doc(userId).update({
-      isActive: false,
-    });
+    await firestore.collection("users").doc(userId).delete();
 
     return true;
   } catch (error) {
@@ -142,7 +154,7 @@ async function activateUser({ id, password, securityKey }) {
     const userQuery = await firestore.collection("users").doc(id).get();
     const user = userQuery.data();
 
-    if (user.securityKey == securityKey) {
+    if (user.securityKey == securityKey && !user.isEmailConfirmed) {
       const encryptedPassword = encrypt(password);
 
       await firestore.collection("users").doc(id).update({

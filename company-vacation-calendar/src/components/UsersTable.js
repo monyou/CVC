@@ -39,7 +39,7 @@ function UsersTable({ users, addUser, removeUser }) {
           label={isSmallDevice ? "" : "Add New"}
           icon={isSmallDevice ? "pi pi-user-plus" : ""}
           className="p-button-success"
-          onClick={() => alert("TODO: Add User")}
+          onClick={() => addUser()}
         />
       </div>
     </div>
@@ -64,7 +64,7 @@ function UsersTable({ users, addUser, removeUser }) {
         className="p-button-danger"
         onClick={() =>
           confirmDialog({
-            message: "Do you want to remove this employee?",
+            message: `Do you want to remove ${data.firstName} ${data.lastName}?`,
             header: "Remove Employee",
             icon: "pi pi-exclamation-triangle",
             acceptClassName: "p-button-success",

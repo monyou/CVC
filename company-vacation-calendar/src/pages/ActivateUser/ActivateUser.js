@@ -1,33 +1,46 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { useHistory } from "react-router-dom";
-import { login } from "../../services/auth.service";
-import { backgroundSoloPage } from "../../styles/colors";
-import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
+import { useParams, useHistory } from "react-router-dom";
+import { activateUser } from "../../services/user.service";
 import { Card } from "primereact/card";
-import { centerDivOnScreen, inputErrorMsg } from "../../styles/common";
-import { Formik } from "formik";
-import { useDispatch } from "react-redux";
-import { loginUserAction } from "../../redux/actions/user.action";
-import calendarLogo from "../../assets/logos/calendar.png";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { Button } from "primereact/button";
+import { InputText } from "primereact/inputtext";
+import { Formik } from "formik";
+import { backgroundSoloPage } from "../../styles/colors";
+import { inputErrorMsg, centerDivOnScreen } from "../../styles/common";
+import { login } from "../../services/auth.service";
+import { loginUserAction } from "../../redux/actions/user.action";
+import { useDispatch } from "react-redux";
 
-function Login() {
+function ActivateUser() {
   const dispatch = useDispatch();
+  const { email, id, securityKey } = useParams();
+
   const routeHistory = useHistory();
-  const [submitLoginFormError, setSubmitLoginFormError] = React.useState(null);
+  const [submitPasswordError, setSubmitPasswordError] = React.useState(null);
 
   function handleFormSubmit(values, { setSubmitting }) {
-    login(values).then(
-      (u) => {
-        setSubmitting(false);
-        dispatch(loginUserAction(u));
-        routeHistory.push("/dashboard");
+    const activateBody = { ...values, id, securityKey };
+    const loginBody = { ...values, email };
+
+    activateUser(activateBody).then(
+      () => {
+        login(loginBody).then(
+          (u) => {
+            setSubmitting(false);
+            dispatch(loginUserAction(u));
+            routeHistory.push("/dashboard");
+          },
+          (error) => {
+            setSubmitting(false);
+            setSubmitPasswordError(error.message);
+          }
+        );
       },
       (error) => {
         setSubmitting(false);
-        setSubmitLoginFormError(error.message);
+        setSubmitPasswordError(error.message);
       }
     );
   }
@@ -35,32 +48,11 @@ function Login() {
   return (
     <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
       <Card css={{ minWidth: "300px", width: "30%", ...centerDivOnScreen }}>
-        <img
-          src={calendarLogo}
-          css={{
-            display: "block",
-            width: "100px",
-            height: "100px",
-            margin: "0 auto",
-            boxShadow: "0 0 50px grey",
-            borderRadius: "10px",
-            cursor: "pointer",
-          }}
-          alt="logo"
-          onClick={() => routeHistory.push("/home")}
-        />
-        <h3 css={{ textAlign: "center" }}>Welcome back</h3>
+        <h3 css={{ textAlign: "center" }}>Welcome aboard</h3>
         <Formik
-          initialValues={{ email: "", password: "" }}
+          initialValues={{ password: "" }}
           validate={(values) => {
             const errors = {};
-            if (!values.email) {
-              errors.email = "Email required";
-            } else if (
-              !/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/g.test(values.email)
-            ) {
-              errors.email = "Invalid email";
-            }
 
             if (!values.password) {
               errors.password = "Password required";
@@ -81,51 +73,27 @@ function Login() {
             <form autoComplete="true" onSubmit={handleSubmit}>
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-inputgroup-addon">
-                  <i className="pi pi-envelope"></i>
-                </span>
-                <span className="p-float-label">
-                  <InputText
-                    id="email"
-                    name="email"
-                    type="text"
-                    value={values.email}
-                    onChange={(e) => {
-                      if (submitLoginFormError) {
-                        setSubmitLoginFormError(null);
-                      }
-                      handleChange(e);
-                    }}
-                  />
-                  <label htmlFor="email">Email</label>
-                </span>
-              </div>
-              {touched.email && errors.email ? (
-                <div css={inputErrorMsg}>{errors.email}</div>
-              ) : null}
-              <div className="p-inputgroup" css={{ marginTop: "25px" }}>
-                <span className="p-inputgroup-addon">
                   <i className="pi pi-key"></i>
                 </span>
                 <span className="p-float-label">
                   <InputText
                     id="password"
-                    name="password"
                     type="password"
                     value={values.password}
                     onChange={(e) => {
-                      if (submitLoginFormError) {
-                        setSubmitLoginFormError(null);
+                      if (submitPasswordError) {
+                        setSubmitPasswordError(null);
                       }
                       handleChange(e);
                     }}
                   />
-                  <label htmlFor="password">Password</label>
+                  <label htmlFor="password">Your password</label>
                 </span>
               </div>
               {touched.password && errors.password ? (
                 <div css={inputErrorMsg}>{errors.password}</div>
               ) : null}
-              {submitLoginFormError ? (
+              {submitPasswordError ? (
                 <div
                   css={{
                     position: "relative",
@@ -134,7 +102,7 @@ function Login() {
                     textAlign: "center",
                   }}
                 >
-                  {submitLoginFormError}
+                  {submitPasswordError}
                 </div>
               ) : null}
               <Button
@@ -157,7 +125,7 @@ function Login() {
                     }}
                   />
                 ) : (
-                  "Login"
+                  "Enter"
                 )}
               </Button>
             </form>
@@ -168,4 +136,4 @@ function Login() {
   );
 }
 
-export { Login };
+export { ActivateUser };

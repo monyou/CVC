@@ -6,6 +6,7 @@ import { NotFoundPage } from "./NotFoundPage";
 import { Dashboard } from "../pages/Dashboard/Dashboard";
 import { MainLayout } from "./layouts/main/MainLayout";
 import { getToken } from "../services/auth.service";
+import { ActivateUser } from "../pages/ActivateUser/ActivateUser";
 
 function RouterConfig() {
   return (
@@ -13,6 +14,7 @@ function RouterConfig() {
       <Redirect exact="true" from="/" to="/home" />
       <Route path="/home" render={() => loadNoAuthPage(Home)} />
       <Route path="/login" render={() => loadNoAuthPage(Login)} />
+      <Route path="/new-user/:email/:id/:securityKey" render={() => loadNoAuthPage(ActivateUser)} />
       <Route path="/subscribe" render={() => <Subscribe />} />
       <Route
         path="/dashboard"

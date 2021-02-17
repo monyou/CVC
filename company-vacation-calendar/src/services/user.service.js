@@ -22,4 +22,13 @@ function deleteUser(id) {
   return backendAPI.POST("/user/delete", deleteBody);
 }
 
-export { getAllUsersByCompanyId, deleteUser, createUser };
+function activateUser({ id, password, securityKey }) {
+  const activateBody = JSON.stringify({
+    id,
+    password,
+    securityKey,
+  });
+  return backendAPI.PUT("/user/activate", activateBody);
+}
+
+export { getAllUsersByCompanyId, deleteUser, createUser, activateUser };
