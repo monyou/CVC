@@ -6,7 +6,7 @@ const {
     v4: uuidv4
 } = require("uuid");
 
-const statuses = require('../enums/vacation-status');
+const statuses = require('../../helpers/vacation-status');
 
 async function getAllVacations() {
     let vacations = [];
