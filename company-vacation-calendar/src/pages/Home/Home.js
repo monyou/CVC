@@ -43,17 +43,13 @@ function Home() {
           css={{ display: "block", width: "150px", marginTop: "30px" }}
           label="Login"
           className="p-button-primary p-button-rounded"
-          onClick={() => {
-            routeHistory.push("/login");
-          }}
+          onClick={() => routeHistory.push("/login")}
         />
         <Button
           css={{ display: "block", width: "150px", marginTop: "10px" }}
           label="Subscribe"
           className="p-button-primary p-button-rounded"
-          onClick={() => {
-            routeHistory.push("/subscribe");
-          }}
+          onClick={() => routeHistory.push("/subscribe")}
         />
       </div>
     </div>

@@ -23,7 +23,7 @@ function Toolbar(calendarEvent, onNewEventHandler) {
         <Button
           label={isSmallDevice ? "" : "Prev"}
           icon={isSmallDevice ? "pi pi-angle-left" : ""}
-          onClick={() => {
+          onClick={() =>
             calendarEvent.onNavigate(
               "prev",
               new Date(
@@ -31,20 +31,18 @@ function Toolbar(calendarEvent, onNewEventHandler) {
                   calendarEvent.date.getMonth() - 1
                 )
               )
-            );
-          }}
+            )
+          }
         />
         <Button
           label={isSmallDevice ? "" : "Today"}
           icon={isSmallDevice ? "pi pi-angle-down" : ""}
-          onClick={() => {
-            calendarEvent.onNavigate("today", moment().toDate());
-          }}
+          onClick={() => calendarEvent.onNavigate("today", moment().toDate())}
         />
         <Button
           label={isSmallDevice ? "" : "Next"}
           icon={isSmallDevice ? "pi pi-angle-right" : ""}
-          onClick={() => {
+          onClick={() =>
             calendarEvent.onNavigate(
               "next",
               new Date(
@@ -52,8 +50,8 @@ function Toolbar(calendarEvent, onNewEventHandler) {
                   calendarEvent.date.getMonth() + 1
                 )
               )
-            );
-          }}
+            )
+          }
         />
       </div>
       <div>{calendarEvent.label}</div>

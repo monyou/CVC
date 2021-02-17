@@ -10,6 +10,8 @@ import { centerDivOnScreen, inputErrorMsg } from "../../styles/common";
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
 import { loginUserAction } from "../../redux/actions/user.action";
+import calendarLogo from "../../assets/logos/calendar.png";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 function Login() {
   const dispatch = useDispatch();
@@ -33,7 +35,21 @@ function Login() {
   return (
     <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
       <Card css={{ minWidth: "300px", width: "30%", ...centerDivOnScreen }}>
-        <h3>Welcome back,</h3>
+        <img
+          src={calendarLogo}
+          css={{
+            display: "block",
+            width: "100px",
+            height: "100px",
+            margin: "0 auto",
+            boxShadow: "0 0 50px grey",
+            borderRadius: "10px",
+            cursor: "pointer",
+          }}
+          alt="logo"
+          onClick={() => routeHistory.push("/home")}
+        />
+        <h3 css={{ textAlign: "center" }}>Welcome back</h3>
         <Formik
           initialValues={{ email: "", password: "" }}
           validate={(values) => {
@@ -129,10 +145,21 @@ function Login() {
                   marginTop: "30px",
                 }}
                 type="submit"
-                label={isSubmitting ? "Processing..." : "Enter"}
                 className="p-button-primary p-button-rounded"
                 disabled={isSubmitting}
-              />
+              >
+                {isSubmitting ? (
+                  <ProgressSpinner
+                    strokeWidth="5"
+                    style={{
+                      width: "15px",
+                      height: "15px",
+                    }}
+                  />
+                ) : (
+                  "Enter"
+                )}
+              </Button>
             </form>
           )}
         </Formik>

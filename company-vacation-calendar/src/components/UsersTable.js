@@ -7,7 +7,7 @@ import { PrimeSmallButton } from "./PrimeSmallButton";
 import { isSmallDevice } from "./../styles/common";
 import { confirmDialog } from "primereact/confirmdialog";
 
-function UsersTable({ users, showInfo, addUser, removeUser }) {
+function UsersTable({ users, addUser, removeUser }) {
   const [globalFilter, setGlobalFilter] = React.useState(null);
   const [expandedRows, setExpandedRows] = React.useState(null);
 
@@ -50,7 +50,7 @@ function UsersTable({ users, showInfo, addUser, removeUser }) {
       <ul>
         <li>{data.email}</li>
       </ul>
-      <li>Active</li>
+      <li>Confirmed</li>
       <ul>
         <li>{data.isEmailConfirmed}</li>
       </ul>
@@ -64,10 +64,11 @@ function UsersTable({ users, showInfo, addUser, removeUser }) {
         className="p-button-danger"
         onClick={() =>
           confirmDialog({
-            message: "Do you want to remove this user?",
-            header: "Remove Confirmation",
+            message: "Do you want to remove this employee?",
+            header: "Remove Employee",
             icon: "pi pi-exclamation-triangle",
-            acceptClassName: "p-button-danger",
+            acceptClassName: "p-button-success",
+            rejectClassName: "p-button-danger",
             accept: () => removeUser(data.id),
           })
         }
