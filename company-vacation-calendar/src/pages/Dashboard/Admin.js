@@ -22,17 +22,27 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { Formik } from "formik";
 import { inputErrorMsg } from "../../styles/common";
 import { roles } from "../../utils/enums";
+import { EventCalendar } from "../../components/EventCalendar";
+import { VacationTypesLegend } from "../../components/VacationTypesLegend";
+import { vacationTypesColors } from "../../styles/colors";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { isSmallDevice } from "../../styles/common";
 
 function Admin() {
   const store = useSelector((state) => ({ user: state.user }));
   const queryClient = useQueryClient();
   const [openAddUserDialog, setOpenAddUserDialog] = React.useState(false);
   const [addUserError, setAddUserError] = React.useState(null);
+  const [eventInfo, setEventInfo] = React.useState({
+    message: "",
+    title: "",
+  });
+  const eventInfoPanel = React.useRef(null);
 
-  const { data: allVacations } = useQuery(
-    "all-vacations",
+  const { data: vacationsForCompany } = useQuery(
+    "vacations-per-company",
     () => getAllVacationsByCompany(store.user.company.id),
-    { enabled: !!store.user?.company?.id }
+    { enabled: !!store.user.company.id }
   );
   const updateVacationMutation = useMutation(
     (requestData) => updateVacation(requestData),
@@ -67,7 +77,8 @@ function Admin() {
   });
 
   const pendingVacations =
-    allVacations?.filter((v) => v.status === vacationStatus.Pending) ?? [];
+    vacationsForCompany?.filter((v) => v.status === vacationStatus.Pending) ??
+    [];
 
   const activeCompanyUsers =
     allCompanyUsers?.filter((u) => u.isActive && u.id !== store.user.sub) ?? [];
@@ -113,7 +124,60 @@ function Admin() {
             handleUpdateVacation={handleUpdateVacation}
           />
         </TabPanel>
-        <TabPanel header="Calendar">Calendar</TabPanel>
+        <TabPanel header="Calendar">
+          <div
+            css={{
+              marginBottom: "20px",
+            }}
+          >
+            <VacationTypesLegend />
+          </div>
+
+          <EventCalendar
+            styles={{ height: "calc(100vh - 220px)" }}
+            eventsList={
+              vacationsForCompany
+                ? vacationsForCompany
+                    .map((v) =>
+                      v.days.map((d) => ({
+                        start: new Date(+d),
+                        end: new Date(+d),
+                        title: v.username,
+                        description: v.description,
+                        vacationType: v.vacationType.name,
+                      }))
+                    )
+                    .flat()
+                : []
+            }
+            eventStyling={(e) => ({
+              style: {
+                textShadow: "0 0 2px black",
+                backgroundColor: vacationTypesColors[e.vacationType],
+              },
+            })}
+            onEventClicked={(e, el) => {
+              setEventInfo({ message: e.description, title: e.title });
+              eventInfoPanel.current.toggle(el);
+            }}
+            newEventOption={false}
+          />
+
+          <OverlayPanel
+            css={{ maxWidth: "92%", transform: "translateX(10px)" }}
+            ref={eventInfoPanel}
+            showCloseIcon
+            dismissable
+          >
+            <div css={{ textAlign: "center", marginBottom: "5px" }}>
+              {eventInfo.title}
+            </div>
+            <div css={{ marginBottom: "10px" }}>
+              I need this vacation because:
+            </div>
+            <div css={{ fontWeight: "600" }}>{eventInfo.message}</div>
+          </OverlayPanel>
+        </TabPanel>
         <TabPanel header="Employees">
           <UsersTable
             users={activeCompanyUsers}
@@ -128,8 +192,8 @@ function Admin() {
       <Dialog
         header="Add employee"
         visible={openAddUserDialog}
-        css={{ width: "70vw" }}
-        contentStyle={{ maxHeight: "90vh", padding: "10px 25px 40px 25px" }}
+        css={{ width: isSmallDevice ? "95%" : "50%" }}
+        contentStyle={{ padding: "10px 25px 40px 25px" }}
         onHide={() => setOpenAddUserDialog(false)}
       >
         <Formik

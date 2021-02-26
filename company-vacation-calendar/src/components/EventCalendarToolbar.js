@@ -3,7 +3,7 @@ import moment from "moment";
 import { PrimeSmallButton as Button } from "../components/PrimeSmallButton";
 import { isSmallDevice } from "../styles/common";
 
-function Toolbar(calendarEvent, onNewEventHandler) {
+function Toolbar(calendarEvent, onNewEventHandler, newEventOption) {
   return (
     <div
       css={{
@@ -15,7 +15,7 @@ function Toolbar(calendarEvent, onNewEventHandler) {
     >
       <div
         css={{
-          width: isSmallDevice ? "120px" : "210px",
+          width: isSmallDevice ? "120px" : "220px",
           display: "flex",
           justifyContent: "space-between",
         }}
@@ -55,11 +55,13 @@ function Toolbar(calendarEvent, onNewEventHandler) {
         />
       </div>
       <div>{calendarEvent.label}</div>
-      <Button
-        label={isSmallDevice ? "" : "New Vacation"}
-        icon={isSmallDevice ? "pi pi-calendar" : ""}
-        onClick={onNewEventHandler}
-      />
+      {newEventOption ? (
+        <Button
+          label={isSmallDevice ? "" : "New Vacation"}
+          icon={isSmallDevice ? "pi pi-calendar" : ""}
+          onClick={onNewEventHandler}
+        />
+      ) : null}
     </div>
   );
 }

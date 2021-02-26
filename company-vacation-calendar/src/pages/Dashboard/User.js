@@ -10,58 +10,54 @@ import { Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
-import { inputErrorMsg } from "../../styles/common";
+import { inputErrorMsg, isSmallDevice } from "../../styles/common";
 import { Calendar } from "primereact/calendar";
 import { createVacation } from "../../services/vacation.service";
 import { getAllHolidays } from "../../services/holiday.service";
 import { useSelector } from "react-redux";
+import { VacationTypesLegend } from "../../components/VacationTypesLegend";
+import { useQuery } from "react-query";
+import { locale } from "primereact/api";
+import { vacationTypesColors } from "../../styles/colors";
+import { OverlayPanel } from "primereact/overlaypanel";
+import { useMutation } from "react-query";
 
 function User() {
+  locale("bg");
+
   const store = useSelector((state) => ({ user: state.user }));
-  const [state, setState] = React.useState({
-    vacationsForCompany: [],
-    vacationTypes: [],
-    holidays: [],
-    showDialog: false,
+  const [
+    showApplyForVacationDialog,
+    setShowApplyForVacationDialog,
+  ] = React.useState(false);
+  const [eventInfo, setEventInfo] = React.useState({
+    message: "",
+    title: "",
   });
+  const eventInfoPanel = React.useRef(null);
 
-  React.useEffect(() => {
-    getAllHolidays().then((response) => {
-      setState((s) => ({
-        ...s,
-        holidays: response.holidays
-          .find((h) => h.year === new Date().getFullYear())
-          .dates.map((d) => new Date(d)),
-      }));
-    });
+  const { data: vacationTypes } = useQuery("vacation-types", () =>
+    getAllVacationTypes().then((data) => data.vacationTypes)
+  );
+  const { data: holidays } = useQuery("holidays", () =>
+    getAllHolidays().then((data) => data.holidays)
+  );
+  const { data: vacationsForCompany } = useQuery(
+    "vacations-per-company",
+    () => getAllVacationsByCompany(store.user.company.id).then((data) => data),
+    {
+      enabled: !!store.user.company.id,
+    }
+  );
 
-    getAllVacationTypes().then((response) => {
-      setState((s) => ({
-        ...s,
-        vacationTypes: response.vacationTypes.map((t) => ({
-          label: t.name,
-          value: t,
-        })),
-      }));
-    });
-
-    getAllVacationsByCompany(store.user?.company?.id).then((vacations) => {
-      let calendarTiles = vacations
-        .map((v) =>
-          v.days.map((d) => ({
-            start: new Date(+d),
-            end: new Date(+d),
-            title: v.username,
-          }))
-        )
-        .flat();
-
-      setState((s) => ({
-        ...s,
-        vacationsForCompany: calendarTiles,
-      }));
-    });
-  }, [store.user?.company?.id]);
+  const createVacationMutation = useMutation(
+    (requestData) => createVacation(requestData),
+    {
+      onSuccess: () => {
+        setShowApplyForVacationDialog(false);
+      },
+    }
+  );
 
   function handleVacationSubmit(values, { setSubmitting }) {
     const requestModel = {
@@ -71,33 +67,77 @@ function User() {
       vacationType: values.vacationType,
       days: values.dates.map((d) => d.getTime()),
     };
-    createVacation(requestModel).then(
-      (response) => {
+    createVacationMutation.mutate(requestModel, {
+      onSettled: () => {
         setSubmitting(false);
-        setState((s) => ({ ...s, showDialog: false }));
       },
-      (error) => {
-        setSubmitting(false);
-      }
-    );
+    });
   }
 
   return (
     <div>
+      <div
+        css={{
+          marginBottom: "30px",
+        }}
+      >
+        <VacationTypesLegend vacationTypes={vacationTypes} />
+      </div>
+
       <EventCalendar
-        eventsList={state.vacationsForCompany}
+        styles={{ height: "calc(100vh - 160px)" }}
+        eventsList={
+          vacationsForCompany
+            ? vacationsForCompany
+                .map((v) =>
+                  v.days.map((d) => ({
+                    start: new Date(+d),
+                    end: new Date(+d),
+                    title: v.username,
+                    description: v.description,
+                    vacationType: v.vacationType.name,
+                  }))
+                )
+                .flat()
+            : []
+        }
+        eventStyling={(e) => ({
+          style: {
+            textShadow: "0 0 2px black",
+            backgroundColor: vacationTypesColors[e.vacationType],
+          },
+        })}
+        onEventClicked={(e, el) => {
+          setEventInfo({ message: e.description, title: e.title });
+          eventInfoPanel.current.toggle(el);
+        }}
         onNewEvent={(e) => {
-          setState((s) => ({ ...s, showDialog: true }));
+          setShowApplyForVacationDialog(true);
         }}
       />
 
+      <OverlayPanel
+        css={{ maxWidth: "92%", transform: "translateX(10px)" }}
+        ref={eventInfoPanel}
+        showCloseIcon
+        dismissable
+      >
+        <div css={{ textAlign: "center", marginBottom: "5px" }}>
+          {eventInfo.title}
+        </div>
+        <div css={{ marginBottom: "10px" }}>I need this vacation because:</div>
+        <div css={{ fontWeight: "600" }}>{eventInfo.message}</div>
+      </OverlayPanel>
+
+      {/* Dialogs */}
+
       <Dialog
         header="Apply for vacation"
-        visible={state.showDialog}
-        css={{ width: "70vw" }}
-        contentStyle={{ maxHeight: "90vh", padding: "10px 25px 40px 25px" }}
+        visible={showApplyForVacationDialog}
+        css={{ width: isSmallDevice ? "95%" : "50%" }}
+        contentStyle={{ padding: "10px 25px 40px 25px" }}
         onHide={() => {
-          setState((s) => ({ ...s, showDialog: false }));
+          setShowApplyForVacationDialog(false);
         }}
       >
         <Formik
@@ -137,7 +177,10 @@ function User() {
                 id="vacationType"
                 name="vacationType"
                 value={values.vacationType}
-                options={state.vacationTypes}
+                options={vacationTypes.map((t) => ({
+                  label: t.name,
+                  value: t,
+                }))}
                 onChange={handleChange}
                 placeholder="Type"
               />
@@ -172,7 +215,9 @@ function User() {
                 }}
                 readOnlyInput
                 disabledDays={[0, 6]}
-                disabledDates={state.holidays}
+                disabledDates={holidays
+                  .find((h) => h.year === new Date().getFullYear())
+                  .dates.map((d) => new Date(d))}
                 inline
                 value={values.dates}
                 id="dates"

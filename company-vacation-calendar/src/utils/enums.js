@@ -14,7 +14,7 @@ export const vacationTypes = {
   Paid: "Paid",
   Unpaid: "Unpaid",
   Sick: "Sick",
-  BizTrip: "Business trip",
+  BizTrip: "Business Trip",
   Maternity: "Maternity",
   Paternity: "Paternity",
 };

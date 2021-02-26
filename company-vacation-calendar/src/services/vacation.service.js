@@ -8,12 +8,23 @@ function getAllVacationTypes() {
   return backendAPI.GET("/vacation-type/getAll");
 }
 
-function createVacation(data) {
-  return backendAPI.POST("/vacation/create", data);
+function createVacation({ userId, username, description, vacationType, days }) {
+  const createBody = JSON.stringify({
+    userId,
+    username,
+    description,
+    vacationType,
+    days,
+  });
+  return backendAPI.POST("/vacation/create", createBody);
 }
 
-function updateVacation(data) {
-  return backendAPI.PUT("/vacation/update", data);
+function updateVacation({ id, status }) {
+  const updateBody = JSON.stringify({
+    id,
+    status,
+  });
+  return backendAPI.PUT("/vacation/update", updateBody);
 }
 
 export {
