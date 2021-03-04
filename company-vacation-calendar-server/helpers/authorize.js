@@ -1,5 +1,8 @@
 const jwt = require("express-jwt");
-const { secret } = require("../config.json");
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 function authorize(roles = []) {
   // roles param can be a single role string (e.g. Role.User or 'User')
@@ -10,7 +13,7 @@ function authorize(roles = []) {
 
   return [
     // authenticate JWT token and attach user to request object (req.user)
-    jwt({ secret, algorithms: ["HS256"] }),
+    jwt({ secret: process.env.AUTH_CONFIG_SECRET, algorithms: ["HS256"] }),
 
     // authorize based on user role
     (req, res, next) => {

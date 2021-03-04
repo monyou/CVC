@@ -1,6 +1,6 @@
 import * as backendAPI from "../utils/backend-api";
 
-const TOKEN = "AUTH_TOKEN";
+const TOKEN = "cvc_auth_token";
 
 function login({ email, password }) {
   const loginBody = JSON.stringify({ email, password });

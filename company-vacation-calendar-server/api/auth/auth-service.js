@@ -1,8 +1,11 @@
 const jwt = require("jsonwebtoken");
-const config = require("../../config.json");
 const { firestore } = require("../../helpers/firebase");
 const { decrypt } = require("../../helpers/crypto");
 const { mailer } = require("../../helpers/mailer");
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 async function authenticate({ email, password }) {
   try {
@@ -23,7 +26,7 @@ async function authenticate({ email, password }) {
             email: user.email,
             name: `${user.firstName} ${user.lastName}`,
           },
-          config.secret
+          process.env.AUTH_CONFIG_SECRET
         );
         return {
           token,
