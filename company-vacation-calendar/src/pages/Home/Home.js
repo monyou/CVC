@@ -1,12 +1,29 @@
 /** @jsxImportSource @emotion/react */
+import React from "react";
 import * as colors from "../../styles/colors";
 import logoCalendar from "../../assets/logos/calendar.png";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { Button } from "primereact/button";
 import { centerDivOnScreen } from "../../styles/common";
+import { Toast } from "primereact/toast";
 
 function Home() {
+  const location = useLocation();
   const routeHistory = useHistory();
+  const subscriptionToast = React.useRef(null);
+
+  React.useEffect(() => {
+    if (location.state?.subscriptionToast) {
+      subscriptionToast.current.show({
+        severity: "info",
+        summary: "Subscription Sent",
+        detail:
+          "Your subscription was sent to the platform admins for review. You will receive an email with instructions when they confirm it!",
+        life: 7000,
+      });
+      window.history.replaceState({}, "");
+    }
+  }, [location.state?.subscriptionToast]);
 
   return (
     <div
@@ -16,6 +33,10 @@ function Home() {
         backgroundColor: colors.backgroundSoloPage,
       }}
     >
+      <Toast
+        css={{ fontSize: "12px", maxWidth: "90%" }}
+        ref={subscriptionToast}
+      />
       <div
         css={{
           ...centerDivOnScreen,

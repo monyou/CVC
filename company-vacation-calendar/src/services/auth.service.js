@@ -11,6 +11,26 @@ function login({ email, password }) {
   });
 }
 
+function subscribe({
+  email,
+  firstName,
+  lastName,
+  name,
+  bulstat,
+  yearVacationLimit,
+}) {
+  const subscribeBody = JSON.stringify({
+    email,
+    firstName,
+    lastName,
+    name,
+    bulstat,
+    yearVacationLimit,
+  });
+
+  return backendAPI.POST("/auth/subscribe", subscribeBody);
+}
+
 function logout() {
   window.localStorage.removeItem(TOKEN);
 }
@@ -43,4 +63,4 @@ function getUserFromToken() {
   }
 }
 
-export { getToken, setToken, login, logout, getUserFromToken };
+export { getToken, setToken, login, logout, getUserFromToken, subscribe };

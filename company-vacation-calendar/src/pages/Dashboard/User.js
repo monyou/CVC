@@ -10,7 +10,10 @@ import { Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
-import { inputErrorMsg, isSmallDevice } from "../../styles/common";
+import {
+  inputErrorMsg,
+  isSmallDeviceMediaQuery,
+} from "../../styles/common";
 import { Calendar } from "primereact/calendar";
 import { createVacation } from "../../services/vacation.service";
 import { getAllHolidays } from "../../services/holiday.service";
@@ -21,6 +24,8 @@ import { locale } from "primereact/api";
 import { vacationTypesColors } from "../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useMutation } from "react-query";
+import { vacationStatus } from "../../utils/enums";
+import moment from "moment";
 
 function User() {
   locale("bg");
@@ -59,6 +64,20 @@ function User() {
     }
   );
 
+  const vacationsCalendarEvents =
+    vacationsForCompany
+      ?.filter((x) => x.status === vacationStatus.Accepted)
+      .map((v) =>
+        v.days.map((d) => ({
+          start: new Date(+d),
+          end: new Date(+d),
+          title: v.username,
+          description: v.description,
+          vacationType: v.vacationType.name,
+        }))
+      )
+      .flat() || [];
+
   function handleVacationSubmit(values, { setSubmitting }) {
     const requestModel = {
       userId: store.user.sub,
@@ -86,21 +105,7 @@ function User() {
 
       <EventCalendar
         styles={{ height: "calc(100vh - 160px)" }}
-        eventsList={
-          vacationsForCompany
-            ? vacationsForCompany
-                .map((v) =>
-                  v.days.map((d) => ({
-                    start: new Date(+d),
-                    end: new Date(+d),
-                    title: v.username,
-                    description: v.description,
-                    vacationType: v.vacationType.name,
-                  }))
-                )
-                .flat()
-            : []
-        }
+        eventsList={vacationsCalendarEvents}
         eventStyling={(e) => ({
           style: {
             textShadow: "0 0 2px black",
@@ -134,7 +139,7 @@ function User() {
       <Dialog
         header="Apply for vacation"
         visible={showApplyForVacationDialog}
-        css={{ width: isSmallDevice ? "95%" : "50%" }}
+        css={{ width: "50%", ...isSmallDeviceMediaQuery({ width: "95%" }) }}
         contentStyle={{ padding: "10px 25px 40px 25px" }}
         onHide={() => {
           setShowApplyForVacationDialog(false);
@@ -213,6 +218,7 @@ function User() {
                   transform: "translateX(-50%)",
                   marginTop: "20px",
                 }}
+                minDate={moment().add(1, "days").toDate()}
                 readOnlyInput
                 disabledDays={[0, 6]}
                 disabledDates={holidays

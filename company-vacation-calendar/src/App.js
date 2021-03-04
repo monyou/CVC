@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { RouterConfig } from "./navigation/RouterConfig";
 import { Provider } from "react-redux";

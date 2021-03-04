@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { PrimeSmallButton } from "./PrimeSmallButton";
+import { PrimeSmallButton } from "../styles/common";
 import { Card } from "primereact/card";
 import moment from "moment";
 

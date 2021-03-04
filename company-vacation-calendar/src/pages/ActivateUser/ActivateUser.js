@@ -8,7 +8,11 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Formik } from "formik";
 import { backgroundSoloPage } from "../../styles/colors";
-import { inputErrorMsg, centerDivOnScreen } from "../../styles/common";
+import {
+  inputErrorMsg,
+  centerDivOnScreen,
+  isSmallDeviceMediaQuery,
+} from "../../styles/common";
 import { login } from "../../services/auth.service";
 import { loginUserAction } from "../../redux/actions/user.action";
 import { useDispatch } from "react-redux";
@@ -47,7 +51,14 @@ function ActivateUser() {
 
   return (
     <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
-      <Card css={{ minWidth: "300px", width: "30%", ...centerDivOnScreen }}>
+      <Card
+        css={{
+          minWidth: "300px",
+          width: "30%",
+          ...centerDivOnScreen,
+          ...isSmallDeviceMediaQuery({ width: "95%" }),
+        }}
+      >
         <h3 css={{ textAlign: "center" }}>Welcome aboard</h3>
         <Formik
           initialValues={{ password: "" }}

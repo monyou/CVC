@@ -110,8 +110,8 @@ async function createUser({
       vacations: [],
     });
 
-    const emailContentForAdmin = `Welcome, dear ${firstName} ${lastName}!<br/>We from 'Company Vacation Calendar' platform created a profile for you.<br/><br/>You only have to click this <a href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">LINK</a> and type your password to enjoy the easy process of managing employees applications for leave!<br/><br/>Best wishes,<br/>CVC Team`;
-    const emailContentForUser = `Welcome, dear ${firstName} ${lastName}!<br/>Your manager created a profile in 'Company Vacation Calendar' platform for you.<br/><br/>You only have to click this <a href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">LINK</a> and type your password to enjoy the easy process of applying for leave from work!<br/><br/>Best wishes,<br/>CVC Team`;
+    const emailContentForAdmin = `Welcome, dear ${firstName} ${lastName}!<br/><br/>We from 'Company Vacation Calendar' platform created a profile for you.<br/><br/>You only have to click this <a href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">LINK</a> and type your password to enjoy the easy process of managing employees applications for leave!<br/><br/>Best wishes,<br/>CVC Team`;
+    const emailContentForUser = `Welcome, dear ${firstName} ${lastName}!<br/><br/>Your manager created a profile in 'Company Vacation Calendar' platform for you.<br/><br/>You only have to click this <a href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">LINK</a> and type your password to enjoy the easy process of applying for leave from work!<br/><br/>Best wishes,<br/>CVC Team`;
 
     const mailOptions = {
       from: process.env.EMAIL_SERVICE_AUTH_EMAIL,

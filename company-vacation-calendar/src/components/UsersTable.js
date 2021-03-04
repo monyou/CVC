@@ -3,7 +3,7 @@ import React from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
-import { PrimeSmallButton } from "./PrimeSmallButton";
+import { PrimeSmallButton } from "../styles/common";
 import { isSmallDevice } from "./../styles/common";
 import { confirmDialog } from "primereact/confirmdialog";
 

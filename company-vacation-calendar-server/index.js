@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const bodyParser = require("body-parser");
 const compression = require("compression");
 const errorHandler = require("./helpers/error-handler");
 const apiRouter = require("./api/api-routing");
@@ -17,13 +16,17 @@ app.set("view engine", "ejs");
 app.use(compression());
 
 // Accept bodies like application/x-www-form-urlencoded, application/json, application/vnd.api+json
-app.use(bodyParser.urlencoded({
-  extended: "true"
-}));
-app.use(bodyParser.json());
-app.use(bodyParser.json({
-  type: "application/vnd.api+json"
-}));
+app.use(
+  express.urlencoded({
+    extended: "true",
+  })
+);
+app.use(express.json());
+app.use(
+  express.json({
+    type: "application/vnd.api+json",
+  })
+);
 
 //Allow cross origin requests
 app.use(function (req, res, next) {

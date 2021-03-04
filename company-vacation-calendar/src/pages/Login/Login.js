@@ -6,7 +6,11 @@ import { backgroundSoloPage } from "../../styles/colors";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { centerDivOnScreen, inputErrorMsg } from "../../styles/common";
+import {
+  centerDivOnScreen,
+  inputErrorMsg,
+  isSmallDeviceMediaQuery,
+} from "../../styles/common";
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
 import { loginUserAction } from "../../redux/actions/user.action";
@@ -34,7 +38,13 @@ function Login() {
 
   return (
     <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
-      <Card css={{ minWidth: "300px", width: "30%", ...centerDivOnScreen }}>
+      <Card
+        css={{
+          width: "40%",
+          ...centerDivOnScreen,
+          ...isSmallDeviceMediaQuery({ width: "95%" }),
+        }}
+      >
         <img
           src={calendarLogo}
           css={{

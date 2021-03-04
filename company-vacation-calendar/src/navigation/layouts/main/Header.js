@@ -1,7 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { PrimeSmallButton as Button } from "../../../components/PrimeSmallButton";
+import { PrimeSmallButton as Button } from "../../../styles/common";
 import { getToken, getUserFromToken } from "../../../services/auth.service";
 import { logoutUserAction } from "../../../redux/actions/user.action";
 import { isSmallDevice } from "../../../styles/common";

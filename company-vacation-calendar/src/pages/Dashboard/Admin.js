@@ -20,13 +20,12 @@ import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Formik } from "formik";
-import { inputErrorMsg } from "../../styles/common";
+import { inputErrorMsg, isSmallDeviceMediaQuery } from "../../styles/common";
 import { roles } from "../../utils/enums";
 import { EventCalendar } from "../../components/EventCalendar";
 import { VacationTypesLegend } from "../../components/VacationTypesLegend";
 import { vacationTypesColors } from "../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { isSmallDevice } from "../../styles/common";
 
 function Admin() {
   const store = useSelector((state) => ({ user: state.user }));
@@ -48,7 +47,7 @@ function Admin() {
     (requestData) => updateVacation(requestData),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries("all-vacations");
+        queryClient.invalidateQueries("vacations-per-company");
       },
     }
   );
@@ -77,11 +76,41 @@ function Admin() {
   });
 
   const pendingVacations =
-    vacationsForCompany?.filter((v) => v.status === vacationStatus.Pending) ??
+    vacationsForCompany?.filter((v) => v.status === vacationStatus.Pending) ||
     [];
 
   const activeCompanyUsers =
-    allCompanyUsers?.filter((u) => u.isActive && u.id !== store.user.sub) ?? [];
+    allCompanyUsers?.filter((u) => u.isActive && u.id !== store.user.sub) || [];
+
+  const vacationsCalendarEvents =
+    vacationsForCompany
+      ?.filter((x) => x.status === vacationStatus.Accepted)
+      .map((v) =>
+        v.days.map((d) => ({
+          start: new Date(+d),
+          end: new Date(+d),
+          title: v.username,
+          description: v.description,
+          vacationType: v.vacationType.name,
+        }))
+      )
+      .flat() || [];
+
+  const vacationsCountPerYear =
+    vacationsForCompany?.reduce((prev, curr) => {
+      let onlyCurrYear = curr.days.filter(
+        (x) => new Date(x).getFullYear() === new Date().getFullYear()
+      );
+      if (curr.status === vacationStatus.Accepted) {
+        if (prev[curr.vacationType.name]) {
+          prev[curr.vacationType.name] =
+            prev[curr.vacationType.name] + onlyCurrYear.length;
+        } else {
+          prev[curr.vacationType.name] = onlyCurrYear.length;
+        }
+      }
+      return prev;
+    }, {}) || {};
 
   function handleUpdateVacation(action, vacationId) {
     let requestData = {
@@ -130,26 +159,12 @@ function Admin() {
               marginBottom: "20px",
             }}
           >
-            <VacationTypesLegend />
+            <VacationTypesLegend vacationTypesCount={vacationsCountPerYear} />
           </div>
 
           <EventCalendar
-            styles={{ height: "calc(100vh - 220px)" }}
-            eventsList={
-              vacationsForCompany
-                ? vacationsForCompany
-                    .map((v) =>
-                      v.days.map((d) => ({
-                        start: new Date(+d),
-                        end: new Date(+d),
-                        title: v.username,
-                        description: v.description,
-                        vacationType: v.vacationType.name,
-                      }))
-                    )
-                    .flat()
-                : []
-            }
+            styles={{ height: "calc(100vh - 230px)" }}
+            eventsList={vacationsCalendarEvents}
             eventStyling={(e) => ({
               style: {
                 textShadow: "0 0 2px black",
@@ -192,7 +207,7 @@ function Admin() {
       <Dialog
         header="Add employee"
         visible={openAddUserDialog}
-        css={{ width: isSmallDevice ? "95%" : "50%" }}
+        css={{ width: "50%", ...isSmallDeviceMediaQuery({ width: "95%" }) }}
         contentStyle={{ padding: "10px 25px 40px 25px" }}
         onHide={() => setOpenAddUserDialog(false)}
       >

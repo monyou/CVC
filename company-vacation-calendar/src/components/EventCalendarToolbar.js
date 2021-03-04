@@ -1,7 +1,10 @@
 /** @jsxImportSource @emotion/react */
 import moment from "moment";
-import { PrimeSmallButton as Button } from "../components/PrimeSmallButton";
-import { isSmallDevice } from "../styles/common";
+import {
+  isSmallDevice,
+  isSmallDeviceMediaQuery,
+  PrimeSmallButton as Button,
+} from "../styles/common";
 
 function Toolbar(calendarEvent, onNewEventHandler, newEventOption) {
   return (
@@ -15,9 +18,10 @@ function Toolbar(calendarEvent, onNewEventHandler, newEventOption) {
     >
       <div
         css={{
-          width: isSmallDevice ? "120px" : "220px",
+          width: "220px",
           display: "flex",
           justifyContent: "space-between",
+          ...isSmallDeviceMediaQuery({ width: "120px" }),
         }}
       >
         <Button
