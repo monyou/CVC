@@ -10,10 +10,7 @@ import { Formik } from "formik";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
-import {
-  inputErrorMsg,
-  isSmallDeviceMediaQuery,
-} from "../../styles/common";
+import { inputErrorMsg, isSmallDeviceMediaQuery } from "../../styles/common";
 import { Calendar } from "primereact/calendar";
 import { createVacation } from "../../services/vacation.service";
 import { getAllHolidays } from "../../services/holiday.service";
@@ -26,15 +23,14 @@ import { OverlayPanel } from "primereact/overlaypanel";
 import { useMutation } from "react-query";
 import { vacationStatus } from "../../utils/enums";
 import moment from "moment";
+import { selectUser } from "../../redux/slices/user.slice";
 
 function User() {
   locale("bg");
 
-  const store = useSelector((state) => ({ user: state.user }));
-  const [
-    showApplyForVacationDialog,
-    setShowApplyForVacationDialog,
-  ] = React.useState(false);
+  const reduxUser = useSelector(selectUser);
+  const [showApplyForVacationDialog, setShowApplyForVacationDialog] =
+    React.useState(false);
   const [eventInfo, setEventInfo] = React.useState({
     message: "",
     title: "",
@@ -49,9 +45,9 @@ function User() {
   );
   const { data: vacationsForCompany } = useQuery(
     "vacations-per-company",
-    () => getAllVacationsByCompany(store.user.company.id).then((data) => data),
+    () => getAllVacationsByCompany(reduxUser.company.id).then((data) => data),
     {
-      enabled: !!store.user.company.id,
+      enabled: !!reduxUser.company.id,
     }
   );
 
@@ -80,8 +76,8 @@ function User() {
 
   function handleVacationSubmit(values, { setSubmitting }) {
     const requestModel = {
-      userId: store.user.sub,
-      username: store.user.name,
+      userId: reduxUser.sub,
+      username: reduxUser.name,
       description: values.description,
       vacationType: values.vacationType,
       days: values.dates.map((d) => d.getTime()),
@@ -130,7 +126,7 @@ function User() {
         <div css={{ textAlign: "center", marginBottom: "5px" }}>
           {eventInfo.title}
         </div>
-        <div css={{ marginBottom: "10px" }}>I need this vacation because:</div>
+        <div css={{ marginBottom: "10px" }}>Reasons:</div>
         <div css={{ fontWeight: "600" }}>{eventInfo.message}</div>
       </OverlayPanel>
 

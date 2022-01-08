@@ -4,11 +4,12 @@ import { Admin } from "./Admin";
 import { SuperAdmin } from "./SuperAdmin";
 import { roles } from "../../utils/enums";
 import { useSelector } from "react-redux";
+import { selectUser } from "../../redux/slices/user.slice";
 
 function Dashboard() {
-  const store = useSelector((state) => ({ user: state.user }));
+  const reduxUser = useSelector(selectUser);
 
-  switch (store.user?.role?.name) {
+  switch (reduxUser?.role?.name) {
     case roles.SuperAdmin:
       return <SuperAdmin />;
     case roles.Admin:

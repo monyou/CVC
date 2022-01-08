@@ -26,9 +26,10 @@ import { EventCalendar } from "../../components/EventCalendar";
 import { VacationTypesLegend } from "../../components/VacationTypesLegend";
 import { vacationTypesColors } from "../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
+import { selectUser } from "../../redux/slices/user.slice";
 
 function Admin() {
-  const store = useSelector((state) => ({ user: state.user }));
+  const reduxUser = useSelector(selectUser);
   const queryClient = useQueryClient();
   const [openAddUserDialog, setOpenAddUserDialog] = React.useState(false);
   const [addUserError, setAddUserError] = React.useState(null);
@@ -40,8 +41,8 @@ function Admin() {
 
   const { data: vacationsForCompany } = useQuery(
     "vacations-per-company",
-    () => getAllVacationsByCompany(store.user.company.id),
-    { enabled: !!store.user.company.id }
+    () => getAllVacationsByCompany(reduxUser.company.id),
+    { enabled: !!reduxUser.company.id }
   );
   const updateVacationMutation = useMutation(
     (requestData) => updateVacation(requestData),
@@ -55,10 +56,10 @@ function Admin() {
   const { data: allCompanyUsers } = useQuery(
     "all-company-users",
     () =>
-      getAllUsersByCompanyId(store.user.company.id).then(
+      getAllUsersByCompanyId(reduxUser.company.id).then(
         (response) => response.users
       ),
-    { enabled: !!store.user?.company?.id }
+    { enabled: !!reduxUser?.company?.id }
   );
   const deleteUserMutation = useMutation((userId) => deleteUser(userId), {
     onSuccess: () => {
@@ -80,7 +81,7 @@ function Admin() {
     [];
 
   const activeCompanyUsers =
-    allCompanyUsers?.filter((u) => u.isActive && u.id !== store.user.sub) || [];
+    allCompanyUsers?.filter((u) => u.isActive && u.id !== reduxUser.sub) || [];
 
   const vacationsCalendarEvents =
     vacationsForCompany
@@ -135,7 +136,7 @@ function Admin() {
     const user = {
       ...values,
       roleName: roles.User,
-      companyName: store.user.company.name,
+      companyName: reduxUser.company.name,
     };
 
     createUserMutation.mutate(user, { onSettled: () => setSubmitting(false) });
@@ -187,9 +188,7 @@ function Admin() {
             <div css={{ textAlign: "center", marginBottom: "5px" }}>
               {eventInfo.title}
             </div>
-            <div css={{ marginBottom: "10px" }}>
-              I need this vacation because:
-            </div>
+            <div css={{ marginBottom: "10px" }}>Reasons:</div>
             <div css={{ fontWeight: "600" }}>{eventInfo.message}</div>
           </OverlayPanel>
         </TabPanel>

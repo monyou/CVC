@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import { Header } from "./Header";
+import { Header } from "../../../components/Header";
 
 function MainLayout({ children }) {
   return (

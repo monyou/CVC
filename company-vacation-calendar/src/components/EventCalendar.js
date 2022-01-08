@@ -1,10 +1,9 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import "moment/locale/bg";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { Toolbar } from "./EventCalendarToolbar";
 import moment from "moment";
-import PropTypes from 'prop-types';
+import PropTypes from "prop-types";
 
 function EventCalendar({
   eventsList = [],
@@ -14,7 +13,7 @@ function EventCalendar({
   newEventOption = true,
   onNewEvent = (e) => {},
   eventStyling = (e) => {},
-  onEventClicked = (e, el) => {}
+  onEventClicked = (e, el) => {},
 }) {
   return (
     <Calendar
@@ -44,7 +43,7 @@ EventCalendar.propTypes = {
   newEventOption: PropTypes.bool,
   onNewEvent: PropTypes.func,
   eventStyling: PropTypes.func,
-  onEventClicked: PropTypes.func
-}
+  onEventClicked: PropTypes.func,
+};
 
 export { EventCalendar };

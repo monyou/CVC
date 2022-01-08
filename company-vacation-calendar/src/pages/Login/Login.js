@@ -13,7 +13,7 @@ import {
 } from "../../styles/common";
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
-import { loginUserAction } from "../../redux/actions/user.action";
+import { loginUser } from "../../redux/slices/user.slice";
 import calendarLogo from "../../assets/logos/calendar.png";
 import { ProgressSpinner } from "primereact/progressspinner";
 
@@ -26,7 +26,7 @@ function Login() {
     login(values).then(
       (u) => {
         setSubmitting(false);
-        dispatch(loginUserAction(u));
+        dispatch(loginUser(u));
         routeHistory.push("/dashboard");
       },
       (error) => {

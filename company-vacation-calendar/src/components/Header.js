@@ -1,15 +1,14 @@
 /** @jsxImportSource @emotion/react */
 import { useDispatch, useSelector } from "react-redux";
-import { PrimeSmallButton as Button } from "../../../styles/common";
-import { getToken, getUserFromToken } from "../../../services/auth.service";
-import { logoutUserAction } from "../../../redux/actions/user.action";
-import { isSmallDevice } from "../../../styles/common";
+import { PrimeSmallButton as Button, isSmallDevice } from "../styles/common";
+import { getToken, getUserFromToken } from "../services/auth.service";
 import { useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
+import { selectUser, logoutUser } from "../redux/slices/user.slice";
 
 function Header() {
   const routeHistory = useHistory();
-  const store = useSelector((state) => ({ user: state.user }));
+  const reduxUser = useSelector(selectUser);
   const dispatch = useDispatch();
   const queryClient = useQueryClient();
 
@@ -36,14 +35,14 @@ function Header() {
           {isSmallDevice ? "CVC" : "Company Vacation Calendar"}
         </div>
         <div css={{ marginRight: "10px" }}>
-          Hello, {store.user?.name || getUserFromToken(getToken())?.name}
+          Hello, {reduxUser?.name || getUserFromToken(getToken())?.name}
         </div>
         <Button
           label={isSmallDevice ? "" : "Logout"}
           icon={isSmallDevice ? "pi pi-sign-out" : ""}
           className="p-button-secondary p-button-raised"
           onClick={() => {
-            dispatch(logoutUserAction());
+            dispatch(logoutUser());
             queryClient.clear();
             routeHistory.push("/login");
           }}

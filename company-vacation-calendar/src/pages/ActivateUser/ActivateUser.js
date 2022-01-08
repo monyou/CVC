@@ -14,7 +14,7 @@ import {
   isSmallDeviceMediaQuery,
 } from "../../styles/common";
 import { login } from "../../services/auth.service";
-import { loginUserAction } from "../../redux/actions/user.action";
+import { loginUser } from "../../redux/slices/user.slice";
 import { useDispatch } from "react-redux";
 
 function ActivateUser() {
@@ -33,7 +33,7 @@ function ActivateUser() {
         login(loginBody).then(
           (u) => {
             setSubmitting(false);
-            dispatch(loginUserAction(u));
+            dispatch(loginUser(u));
             routeHistory.push("/dashboard");
           },
           (error) => {
