@@ -1,4 +1,5 @@
 export const backgroundSoloPage = "#282c34";
+export const primaryColor = "#2196F3";
 
 export const vacationTypesColors: {
   [key: string]: string;
@@ -12,6 +13,7 @@ export const vacationTypesColors: {
 };
 
 const colors = {
+  primaryColor,
   backgroundSoloPage,
   vacationTypesColors,
 };
