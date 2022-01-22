@@ -16,13 +16,13 @@ import { TabView, TabPanel } from "primereact/tabview";
 import VacationRequestsList from "../../../../components/VacationRequestsList";
 import UsersTable from "../../../../components/UsersTable";
 import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Formik } from "formik";
 import {
   inputErrorMsg,
   isSmallDeviceMediaQuery,
+  PrimeButton,
 } from "../../../../styles/common";
 import { Roles } from "../../../../utils/enums";
 import EventCalendar from "../../../../components/EventCalendar";
@@ -341,13 +341,7 @@ function AdminDashboard() {
                   {addUserError}
                 </div>
               ) : null}
-              <Button
-                css={{
-                  display: "block",
-                  width: "150px",
-                  margin: "0 auto",
-                  marginTop: "30px",
-                }}
+              <PrimeButton
                 type="submit"
                 className="p-button-primary p-button-rounded"
                 disabled={isSubmitting}
@@ -363,7 +357,7 @@ function AdminDashboard() {
                 ) : (
                   "Add"
                 )}
-              </Button>
+              </PrimeButton>
             </form>
           )}
         </Formik>

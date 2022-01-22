@@ -6,12 +6,12 @@ import {
   inputErrorMsg,
   inputGroupWithError,
   isSmallDeviceMediaQuery,
+  PrimeButton,
 } from "../../../../styles/common";
 import { Card } from "primereact/card";
 import calendarLogo from "../../../../assets/logos/calendar.png";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { ErrorMessage, Formik } from "formik";
 import { useHistory } from "react-router";
 import { subscribe } from "../../../../services/auth.service";
@@ -302,13 +302,7 @@ function Subscribe() {
                   </div>
                 </div>
               </div>
-              <Button
-                css={{
-                  display: "block",
-                  width: "150px",
-                  margin: "0 auto",
-                  marginTop: "30px",
-                }}
+              <PrimeButton
                 type="submit"
                 className="p-button-primary p-button-rounded"
                 disabled={isSubmitting}
@@ -324,7 +318,7 @@ function Subscribe() {
                 ) : (
                   "Subscribe"
                 )}
-              </Button>
+              </PrimeButton>
             </form>
           )}
         </Formik>

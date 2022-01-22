@@ -3,8 +3,7 @@ import React from "react";
 import * as colors from "../../../../styles/colors";
 import logoCalendar from "../../../../assets/logos/calendar.png";
 import { useHistory } from "react-router-dom";
-import { Button } from "primereact/button";
-import { centerDivOnScreen } from "../../../../styles/common";
+import { centerDivOnScreen, PrimeButton } from "../../../../styles/common";
 
 function Home() {
   const routeHistory = useHistory();
@@ -41,14 +40,13 @@ function Home() {
           src={logoCalendar}
           alt="logo"
         />
-        <Button
-          css={{ display: "block", width: "150px", marginTop: "30px" }}
+        <PrimeButton
           label="Login"
           className="p-button-primary p-button-rounded"
           onClick={() => routeHistory.push("/login")}
         />
-        <Button
-          css={{ display: "block", width: "150px", marginTop: "10px" }}
+        <PrimeButton
+          css={{ marginTop: "10px" }}
           label="Subscribe"
           className="p-button-primary p-button-rounded"
           onClick={() => routeHistory.push("/subscribe")}

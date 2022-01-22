@@ -4,7 +4,7 @@ import moment from "moment";
 import {
   isSmallDevice,
   isSmallDeviceMediaQuery,
-  PrimeSmallButton as Button,
+  PrimeSmallButton,
 } from "../styles/common";
 
 function Toolbar(
@@ -29,7 +29,7 @@ function Toolbar(
           ...isSmallDeviceMediaQuery({ width: "120px" }),
         }}
       >
-        <Button
+        <PrimeSmallButton
           label={isSmallDevice ? "" : "Prev"}
           icon={isSmallDevice ? "pi pi-angle-left" : ""}
           onClick={() =>
@@ -43,12 +43,12 @@ function Toolbar(
             )
           }
         />
-        <Button
+        <PrimeSmallButton
           label={isSmallDevice ? "" : "Today"}
           icon={isSmallDevice ? "pi pi-angle-down" : ""}
           onClick={() => calendarEvent.onNavigate("today", moment().toDate())}
         />
-        <Button
+        <PrimeSmallButton
           label={isSmallDevice ? "" : "Next"}
           icon={isSmallDevice ? "pi pi-angle-right" : ""}
           onClick={() =>
@@ -65,7 +65,7 @@ function Toolbar(
       </div>
       <div>{calendarEvent.label}</div>
       {newEventOption ? (
-        <Button
+        <PrimeSmallButton
           label={isSmallDevice ? "" : "New Vacation"}
           icon={isSmallDevice ? "pi pi-calendar" : ""}
           onClick={onNewEventHandler}

@@ -7,12 +7,12 @@ import {
   getAllVacationTypes,
 } from "../../../../services/vacation.service";
 import { Formik } from "formik";
-import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import {
   inputErrorMsg,
   isSmallDeviceMediaQuery,
+  PrimeButton,
 } from "../../../../styles/common";
 import { Calendar } from "primereact/calendar";
 import { createVacation } from "../../../../services/vacation.service";
@@ -258,13 +258,7 @@ function UserDashboard() {
               {touched.dates && errors.dates ? (
                 <div css={inputErrorMsg}>{errors.dates}</div>
               ) : null}
-              <Button
-                css={{
-                  display: "block",
-                  width: "150px",
-                  margin: "0 auto",
-                  marginTop: "30px",
-                }}
+              <PrimeButton
                 type="submit"
                 label={isSubmitting ? "Processing..." : "Enter"}
                 className="p-button-primary p-button-rounded"

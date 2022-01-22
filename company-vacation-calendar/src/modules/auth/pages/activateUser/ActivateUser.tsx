@@ -4,7 +4,6 @@ import { useParams, useHistory } from "react-router-dom";
 import { activateUser } from "../../../../services/user.service";
 import { Card } from "primereact/card";
 import { ProgressSpinner } from "primereact/progressspinner";
-import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Formik } from "formik";
 import { backgroundSoloPage } from "../../../../styles/colors";
@@ -12,6 +11,7 @@ import {
   inputErrorMsg,
   centerDivOnScreen,
   isSmallDeviceMediaQuery,
+  PrimeButton,
 } from "../../../../styles/common";
 import { login } from "../../../../services/auth.service";
 import { loginUser } from "../../../../redux/slices/user.slice";
@@ -128,13 +128,7 @@ function ActivateUser() {
                   {submitPasswordError}
                 </div>
               ) : null}
-              <Button
-                css={{
-                  display: "block",
-                  width: "150px",
-                  margin: "0 auto",
-                  marginTop: "30px",
-                }}
+              <PrimeButton
                 type="submit"
                 className="p-button-primary p-button-rounded"
                 disabled={isSubmitting}
@@ -150,7 +144,7 @@ function ActivateUser() {
                 ) : (
                   "Enter"
                 )}
-              </Button>
+              </PrimeButton>
             </form>
           )}
         </Formik>

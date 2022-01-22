@@ -4,12 +4,12 @@ import { useHistory } from "react-router-dom";
 import { login } from "../../../../services/auth.service";
 import { backgroundSoloPage } from "../../../../styles/colors";
 import { InputText } from "primereact/inputtext";
-import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import {
   centerDivOnScreen,
   inputErrorMsg,
   isSmallDeviceMediaQuery,
+  PrimeButton,
 } from "../../../../styles/common";
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
@@ -158,13 +158,7 @@ function Login() {
                   {submitLoginFormError}
                 </div>
               ) : null}
-              <Button
-                css={{
-                  display: "block",
-                  width: "150px",
-                  margin: "0 auto",
-                  marginTop: "30px",
-                }}
+              <PrimeButton
                 type="submit"
                 className="p-button-primary p-button-rounded"
                 disabled={isSubmitting}
@@ -180,7 +174,7 @@ function Login() {
                 ) : (
                   "Login"
                 )}
-              </Button>
+              </PrimeButton>
             </form>
           )}
         </Formik>

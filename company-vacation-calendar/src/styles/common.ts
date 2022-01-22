@@ -30,6 +30,13 @@ export const PrimeSmallButton = styled(Button)({
   height: "30px",
 });
 
+export const PrimeButton = styled(Button)({
+  display: "block",
+  width: "150px",
+  margin: "0 auto",
+  marginTop: "30px",
+});
+
 const common = {
   centerDivOnScreen,
   inputGroupWithError,
@@ -37,6 +44,7 @@ const common = {
   isSmallDevice,
   isSmallDeviceMediaQuery,
   PrimeSmallButton,
+  PrimeButton,
 };
 
 export default common;
