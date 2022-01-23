@@ -25,6 +25,7 @@ async function authenticate({ email, password }) {
             company: user.company,
             email: user.email,
             name: `${user.firstName} ${user.lastName}`,
+            vacationLimit: user.vacationLimit,
           },
           process.env.AUTH_CONFIG_SECRET
         );

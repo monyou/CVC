@@ -82,6 +82,11 @@ function UserDashboard() {
           type: toast.TYPE.SUCCESS,
         });
       },
+      onError: (error: any) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      },
     }
   );
 
@@ -98,6 +103,21 @@ function UserDashboard() {
         }))
       )
       .flat() || [];
+
+  const userPendingVacationApplications =
+    vacationsForCompany
+      ?.filter(
+        (x) => x.status === VacationStatus.Pending && x.userId === reduxUser.sub
+      )
+      .flatMap((x) => x.days)
+      .map((d) => new Date(d)) || [];
+
+  const disabledDaysForApplicationLeave = [
+    ...(holidays
+      ?.find((h) => h.year === new Date().getFullYear())
+      ?.dates.map((d) => new Date(d)) || []),
+    ...userPendingVacationApplications,
+  ];
 
   function handleVacationSubmit(
     values: UserSubmitVacationFormikProps,
@@ -119,16 +139,15 @@ function UserDashboard() {
 
   return (
     <div>
-      <div
-        css={{
-          marginBottom: "30px",
-        }}
-      >
+      <div css={{ marginBottom: 10 }}>
+        Vacations Left: {reduxUser.vacationLimit}
+      </div>
+      <div css={{ marginBottom: 30 }}>
         <VacationTypesLegend vacationTypes={vacationTypes} />
       </div>
 
       <EventCalendar
-        styles={{ height: "calc(100vh - 160px)" }}
+        styles={{ height: "calc(100vh - 190px)" }}
         eventsList={vacationsCalendarEvents}
         eventStyling={(e: any) => ({
           style: {
@@ -179,7 +198,7 @@ function UserDashboard() {
             }
 
             if (!values.description) {
-              errors.description = "Description required";
+              errors.description = "Reason required";
             }
 
             if (values.dates.length < 1) {
@@ -227,9 +246,7 @@ function UserDashboard() {
                     onChange={handleChange}
                     autoResize
                   />
-                  <label htmlFor="description">
-                    Why you need this vacation
-                  </label>
+                  <label htmlFor="description">Reasons</label>
                 </span>
               </div>
               {touched.description && errors.description ? (
@@ -245,9 +262,7 @@ function UserDashboard() {
                 minDate={moment().add(1, "days").toDate()}
                 readOnlyInput
                 disabledDays={[0, 6]}
-                disabledDates={holidays
-                  ?.find((h) => h.year === new Date().getFullYear())
-                  ?.dates.map((d) => new Date(d))}
+                disabledDates={disabledDaysForApplicationLeave}
                 inline
                 value={values.dates}
                 id="dates"

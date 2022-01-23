@@ -41,7 +41,7 @@ const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
             marginTop: "10px",
           }}
         >
-          {vacationTypesToShow?.map((x) => (
+          {vacationTypesToShow?.map((x, i) => (
             <div key={x.id}>
               <div
                 css={{
@@ -69,6 +69,9 @@ const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
                     ...isSmallDeviceMediaQuery({ marginRight: "none" }),
                   }}
                   data-pr-tooltip={x.name}
+                  data-pr-position={
+                    i < vacationTypesToShow.length - 2 ? "right" : "left"
+                  }
                 >
                   {x.name.split(" ").length > 1
                     ? `${x.name.split(" ")[0][0]}${x.name.split(" ")[1][0]}`
