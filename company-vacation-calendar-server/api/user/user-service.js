@@ -47,12 +47,14 @@ async function getUsersByCompanyId({ companyId }) {
 async function getAllUsers() {
   try {
     const usersQuery = await firestore.collection("users").get();
-    const users = usersQuery.docs.map((d) => {
-      let user = d.data();
-      const { password, ...userWithoutPassword } = user;
+    const users = usersQuery.docs
+      .map((d) => {
+        let user = d.data();
+        const { password, ...userWithoutPassword } = user;
 
-      return userWithoutPassword;
-    });
+        return userWithoutPassword;
+      })
+      .filter((user) => user.role.name !== roles.SuperAdmin);
 
     return {
       users,

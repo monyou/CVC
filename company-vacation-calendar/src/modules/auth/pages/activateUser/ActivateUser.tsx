@@ -23,14 +23,13 @@ import {
   ActivateUserProps,
   LoginProps,
 } from "../../types/auth.type";
+import { toast } from "react-toastify";
 
 function ActivateUser() {
   const dispatch = useDispatch();
   const { email, id, securityKey } = useParams<ActivateUserParamsProps>();
 
   const routeHistory = useHistory();
-  const [submitPasswordError, setSubmitPasswordError] =
-    React.useState<string>("");
 
   function handleFormSubmit(
     values: ActivateUserFormikProps,
@@ -49,13 +48,17 @@ function ActivateUser() {
           },
           (error) => {
             setSubmitting(false);
-            setSubmitPasswordError(error.message);
+            toast(error.message, {
+              type: toast.TYPE.ERROR,
+            });
           }
         );
       },
       (error) => {
         setSubmitting(false);
-        setSubmitPasswordError(error.message);
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
       }
     );
   }
@@ -103,30 +106,13 @@ function ActivateUser() {
                     id="password"
                     type="password"
                     value={values.password}
-                    onChange={(e) => {
-                      if (submitPasswordError) {
-                        setSubmitPasswordError("");
-                      }
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="password">Your password</label>
                 </span>
               </div>
               {touched.password && errors.password ? (
                 <div css={inputErrorMsg}>{errors.password}</div>
-              ) : null}
-              {submitPasswordError ? (
-                <div
-                  css={{
-                    position: "relative",
-                    top: "15px",
-                    color: "red",
-                    textAlign: "center",
-                  }}
-                >
-                  {submitPasswordError}
-                </div>
               ) : null}
               <PrimeButton
                 type="submit"

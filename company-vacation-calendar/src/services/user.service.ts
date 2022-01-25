@@ -6,6 +6,10 @@ export function getAllUsersByCompanyId(id: string): Promise<any> {
   return backendAPI.GET(`/user/getAllByCompanyId?companyId=${id}`);
 }
 
+export function getAllUsers(): Promise<any> {
+  return backendAPI.GET(`/user/getAll`);
+}
+
 export function createUser({
   email,
   firstName,
@@ -45,6 +49,7 @@ export function activateUser({
 
 const userService = {
   getAllUsersByCompanyId,
+  getAllUsers,
   deleteUser,
   createUser,
   activateUser,

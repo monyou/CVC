@@ -39,13 +39,13 @@ import {
   CreateUserProps,
   UpdateVacationProps,
 } from "../../types/admin.type";
+import { toast } from "react-toastify";
 
 function AdminDashboard() {
   const reduxUser = useSelector(selectUser);
   const queryClient = useQueryClient();
   const [openAddUserDialog, setOpenAddUserDialog] =
     React.useState<boolean>(false);
-  const [addUserError, setAddUserError] = React.useState<string>("");
   const [eventInfo, setEventInfo] = React.useState<AdminEventInfoProps>({
     message: "",
     title: "",
@@ -65,6 +65,14 @@ function AdminDashboard() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("vacations-per-company");
+        toast("Successfully updated vacation request", {
+          type: toast.TYPE.SUCCESS,
+        });
+      },
+      onError: (error: any) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
       },
     }
   );
@@ -85,6 +93,14 @@ function AdminDashboard() {
     {
       onSuccess: () => {
         queryClient.invalidateQueries("all-company-users");
+        toast("Successfully removed user", {
+          type: toast.TYPE.SUCCESS,
+        });
+      },
+      onError: (error: any) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
       },
     }
   );
@@ -94,9 +110,14 @@ function AdminDashboard() {
       onSuccess: () => {
         queryClient.invalidateQueries("all-company-users");
         setOpenAddUserDialog(false);
+        toast("Successfully created user", {
+          type: toast.TYPE.SUCCESS,
+        });
       },
       onError: (error: any) => {
-        setAddUserError(error.message);
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
       },
     }
   );
@@ -278,12 +299,7 @@ function AdminDashboard() {
                     id="email"
                     type="email"
                     value={values.email}
-                    onChange={(e) => {
-                      if (addUserError) {
-                        setAddUserError("");
-                      }
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="email">Email</label>
                 </span>
@@ -297,12 +313,7 @@ function AdminDashboard() {
                     id="firstName"
                     type="text"
                     value={values.firstName}
-                    onChange={(e) => {
-                      if (addUserError) {
-                        setAddUserError("");
-                      }
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="firstName">First Name</label>
                 </span>
@@ -316,30 +327,13 @@ function AdminDashboard() {
                     id="lastName"
                     type="text"
                     value={values.lastName}
-                    onChange={(e) => {
-                      if (addUserError) {
-                        setAddUserError("");
-                      }
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="lastName">Last Name</label>
                 </span>
               </div>
               {touched.lastName && errors.lastName ? (
                 <div css={inputErrorMsg}>{errors.lastName}</div>
-              ) : null}
-              {addUserError ? (
-                <div
-                  css={{
-                    position: "relative",
-                    top: "15px",
-                    color: "red",
-                    textAlign: "center",
-                  }}
-                >
-                  {addUserError}
-                </div>
               ) : null}
               <PrimeButton
                 type="submit"

@@ -37,4 +37,21 @@ router.post(
   }
 );
 
+router.post(
+  "/company/delete",
+  authorize([roles.SuperAdmin]),
+  (req, res, next) => {
+    companyService
+      .deleteCompany(req.body)
+      .then((response) =>
+        response
+          ? res.json(response)
+          : res.status(400).json({
+              message: "Unable to delete company!",
+            })
+      )
+      .catch((err) => next(err));
+  }
+);
+
 module.exports = router;

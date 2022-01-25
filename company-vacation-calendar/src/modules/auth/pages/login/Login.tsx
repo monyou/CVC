@@ -21,12 +21,11 @@ import {
   LoginFormikProps,
   LoginProps,
 } from "../../types/auth.type";
+import { toast } from "react-toastify";
 
 function Login() {
   const dispatch = useDispatch();
   const routeHistory = useHistory();
-  const [submitLoginFormError, setSubmitLoginFormError] =
-    React.useState<string>("");
 
   function handleFormSubmit(
     values: LoginFormikProps,
@@ -41,7 +40,9 @@ function Login() {
       },
       (error) => {
         setSubmitting(false);
-        setSubmitLoginFormError(error.message);
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
       }
     );
   }
@@ -110,12 +111,7 @@ function Login() {
                     name="email"
                     type="text"
                     value={values.email}
-                    onChange={(e) => {
-                      if (submitLoginFormError) {
-                        setSubmitLoginFormError("");
-                      }
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="email">Email</label>
                 </span>
@@ -133,30 +129,13 @@ function Login() {
                     name="password"
                     type="password"
                     value={values.password}
-                    onChange={(e) => {
-                      if (submitLoginFormError) {
-                        setSubmitLoginFormError("");
-                      }
-                      handleChange(e);
-                    }}
+                    onChange={handleChange}
                   />
                   <label htmlFor="password">Password</label>
                 </span>
               </div>
               {touched.password && errors.password ? (
                 <div css={inputErrorMsg}>{errors.password}</div>
-              ) : null}
-              {submitLoginFormError ? (
-                <div
-                  css={{
-                    position: "relative",
-                    top: "15px",
-                    color: "red",
-                    textAlign: "center",
-                  }}
-                >
-                  {submitLoginFormError}
-                </div>
               ) : null}
               <PrimeButton
                 type="submit"
