@@ -143,22 +143,6 @@ function AdminDashboard() {
       )
       .flat() || [];
 
-  const vacationsCountPerYear =
-    vacationsForCompany?.reduce((prev: any, curr) => {
-      let onlyCurrYear = curr.days.filter(
-        (x) => new Date(x).getFullYear() === new Date().getFullYear()
-      );
-      if (curr.status === VacationStatus.Accepted) {
-        if (prev[curr.vacationType.name]) {
-          prev[curr.vacationType.name] =
-            prev[curr.vacationType.name] + onlyCurrYear.length;
-        } else {
-          prev[curr.vacationType.name] = onlyCurrYear.length;
-        }
-      }
-      return prev;
-    }, {}) || {};
-
   function handleUpdateVacation(action: string, vacationId: string): void {
     let requestData: UpdateVacationProps = {
       id: vacationId,
@@ -209,11 +193,11 @@ function AdminDashboard() {
               marginBottom: "20px",
             }}
           >
-            <VacationTypesLegend vacationTypesCount={vacationsCountPerYear} />
+            <VacationTypesLegend />
           </div>
 
           <EventCalendar
-            styles={{ height: "calc(100vh - 230px)" }}
+            styles={{ height: "calc(100vh - 225px)" }}
             eventsList={vacationsCalendarEvents}
             eventStyling={(e: any) => ({
               style: {
@@ -234,10 +218,10 @@ function AdminDashboard() {
             showCloseIcon
             dismissable
           >
-            <div css={{ textAlign: "center", marginBottom: "5px" }}>
+            <div css={{ textAlign: "center", marginBottom: "10px" }}>
               {eventInfo.title}
             </div>
-            <div css={{ marginBottom: "10px" }}>Reasons:</div>
+            <div>Reasons:</div>
             <div css={{ fontWeight: "600" }}>{eventInfo.message}</div>
           </OverlayPanel>
         </TabPanel>

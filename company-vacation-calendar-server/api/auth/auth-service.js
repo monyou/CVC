@@ -24,7 +24,8 @@ async function authenticate({ email, password }) {
             role: user.role,
             company: user.company,
             email: user.email,
-            name: `${user.firstName} ${user.lastName}`,
+            firstName: user.firstName,
+            lastName: user.lastName,
             vacationLimit: user.vacationLimit,
           },
           process.env.AUTH_CONFIG_SECRET

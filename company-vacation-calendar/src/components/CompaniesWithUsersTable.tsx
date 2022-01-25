@@ -56,6 +56,7 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
+            css={{ width: 240 }}
             type="search"
             onInput={(e: any) => setGlobalFilter(e.target.value)}
             placeholder="Global Search"
@@ -65,7 +66,7 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
       <div css={{ marginLeft: "auto" }}>
         <PrimeSmallButton
           label={isSmallDevice ? "" : "Add New"}
-          icon={isSmallDevice ? "pi pi-user-plus" : ""}
+          icon="pi pi-user-plus"
           className="p-button-success"
           onClick={() => addCompany()}
         />
@@ -87,7 +88,7 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
     <div>
       <PrimeSmallButton
         label={isSmallDevice ? "" : "Remove"}
-        icon={isSmallDevice ? "pi pi-user-minus" : ""}
+        icon="pi pi-user-minus"
         className="p-button-danger"
         onClick={() =>
           confirmDialog({
@@ -119,7 +120,7 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
         globalFilter={globalFilter}
         header={tableHeader}
       >
-        <Column expander style={{ width: "1em" }} />
+        <Column expander />
         <Column sortable field="name" header="Company Name" />
         <Column sortable field="bulstat" header="Bulstat" />
         <Column

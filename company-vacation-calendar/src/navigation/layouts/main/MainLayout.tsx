@@ -7,6 +7,7 @@ import { useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
 import { selectUser, logoutUser } from "../../../redux/slices/user.slice";
 import { ToastContainer } from "react-toastify";
+import cvcLogo from "../../../assets/logos/calendar.png";
 
 const MainLayout: React.FC = ({ children }) => {
   const routeHistory = useHistory();
@@ -21,29 +22,31 @@ const MainLayout: React.FC = ({ children }) => {
           css={{
             width: "100%",
             height: "50px",
-            border: "1px solid gray",
-            borderRadius: "0 0 10px 10px",
             display: "flex",
             alignItems: "center",
             justifyContent: "flex-end",
             padding: "0 10px",
-            backgroundColor: "#f8f9fa",
           }}
         >
           <div
             css={{
               marginRight: "auto",
+              height: "100%",
             }}
           >
-            {isSmallDevice ? "CVC" : "Company Vacation Calendar"}
+            <img
+              css={{ width: "auto", height: "100%", verticalAlign: "middle" }}
+              src={cvcLogo}
+              alt="cvc_logo"
+            />
+            {isSmallDevice ? null : "Company Vacation Calendar"}
           </div>
           <div css={{ marginRight: "10px" }}>
-            Hello, {reduxUser?.name || getUserFromToken()?.name}
+            Hi, {reduxUser?.firstName || getUserFromToken()?.firstName}
           </div>
           <PrimeSmallButton
-            label={isSmallDevice ? "" : "Logout"}
-            icon={isSmallDevice ? "pi pi-sign-out" : ""}
-            className="p-button-secondary p-button-raised"
+            icon="pi pi-sign-out"
+            className="p-button-raised"
             onClick={() => {
               dispatch(logoutUser());
               queryClient.clear();

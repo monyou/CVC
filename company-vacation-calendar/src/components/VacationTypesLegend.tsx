@@ -9,12 +9,10 @@ import VacationTypeModel from "../dtos/vacationType.dto";
 
 type VacationTypesLegendProps = {
   vacationTypes?: Array<VacationTypeModel>;
-  vacationTypesCount?: any;
 };
 
 const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
   vacationTypes,
-  vacationTypesCount,
 }) => {
   const { data: newVacationTypes, isLoading } = useQuery<
     Array<VacationTypeModel>
@@ -33,7 +31,6 @@ const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
   } else {
     return (
       <div>
-        <div>Vacation Types:</div>
         <div
           css={{
             display: "flex",
@@ -79,16 +76,6 @@ const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
                 </div>
                 {isSmallDevice ? null : <div>{x.name}</div>}
               </div>
-              {vacationTypesCount ? (
-                <div
-                  css={{
-                    marginTop: "5px",
-                    textAlign: "center",
-                  }}
-                >
-                  {vacationTypesCount[x.name]}
-                </div>
-              ) : null}
             </div>
           ))}
         </div>

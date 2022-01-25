@@ -65,7 +65,9 @@ export interface SubscribeFormikErrors {
 export interface UserFromTokenModel {
   iat: number;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
   role: RoleModel;
   company: CompanyModel;
+  vacationLimit: number;
 }

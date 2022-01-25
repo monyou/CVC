@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { PrimeSmallButton } from "../styles/common";
+import { isSmallDevice, PrimeSmallButton } from "../styles/common";
 import { Card } from "primereact/card";
 import moment from "moment";
 import VacationModel from "../dtos/vacation.dto";
@@ -34,14 +34,14 @@ const VacationRequestsList: React.FC<VacationRequestsListProps> = ({
                 footer={
                   <div css={{ textAlign: "center" }}>
                     <PrimeSmallButton
-                      label="Accept"
+                      label={isSmallDevice ? "" : "Accept"}
                       className="p-button-success"
                       icon="pi pi-check"
-                      style={{ marginRight: ".25em" }}
+                      style={{ marginRight: ".5em" }}
                       onClick={() => handleUpdateVacation("accept", v.id)}
                     />
                     <PrimeSmallButton
-                      label="Reject"
+                      label={isSmallDevice ? "" : "Reject"}
                       icon="pi pi-times"
                       className="p-button-danger"
                       onClick={() => handleUpdateVacation("reject", v.id)}
@@ -49,8 +49,8 @@ const VacationRequestsList: React.FC<VacationRequestsListProps> = ({
                   </div>
                 }
               >
-                <div css={{ height: "150px", overflow: "auto" }}>
-                  {v.description}
+                {v.description}
+                <div css={{ height: "70px", overflowY: "scroll" }}>
                   <ul>
                     {v.days.sort().map((d) => {
                       return (

@@ -8,7 +8,6 @@ import { Card } from "primereact/card";
 import {
   centerDivOnScreen,
   inputErrorMsg,
-  isSmallDeviceMediaQuery,
   PrimeButton,
 } from "../../../../styles/common";
 import { Formik } from "formik";
@@ -52,9 +51,8 @@ function Login() {
       <Card
         css={{
           position: "absolute",
-          width: "40%",
+          width: "clamp(300px, 95%, 500px)",
           ...centerDivOnScreen,
-          ...isSmallDeviceMediaQuery({ width: "95%" }),
         }}
       >
         <img

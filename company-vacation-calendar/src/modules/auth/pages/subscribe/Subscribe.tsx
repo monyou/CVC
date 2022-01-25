@@ -65,12 +65,11 @@ function Subscribe() {
     <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
       <Card
         css={{
-          width: "70%",
+          width: "clamp(300px, 95%, 500px)",
           maxHeight: "95%",
           overflowY: "auto",
           position: "absolute",
           ...centerDivOnScreen,
-          ...isSmallDeviceMediaQuery({ width: "95%" }),
         }}
       >
         <img

@@ -6,6 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { PrimeSmallButton } from "../styles/common";
 import { isSmallDevice } from "../styles/common";
 import { confirmDialog } from "primereact/confirmdialog";
+import { Divider } from "primereact/divider";
 import UserModel from "../dtos/user.dto";
 
 type UsersTableProps = {
@@ -42,6 +43,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <InputText
+            css={{ width: 240 }}
             type="search"
             onInput={(e: any) => setGlobalFilter(e.target.value)}
             placeholder="Global Search"
@@ -51,7 +53,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
       <div css={{ marginLeft: "auto" }}>
         <PrimeSmallButton
           label={isSmallDevice ? "" : "Add New"}
-          icon={isSmallDevice ? "pi pi-user-plus" : ""}
+          icon="pi pi-user-plus"
           className="p-button-success"
           onClick={() => addUser()}
         />
@@ -60,23 +62,19 @@ const UsersTable: React.FC<UsersTableProps> = ({
   );
 
   const tableMoreInfoTemplate = (data: UserModel) => (
-    <ul>
-      <li>Email</li>
-      <ul>
-        <li>{data.email}</li>
-      </ul>
-      <li>Confirmed</li>
-      <ul>
-        <li>{data.isEmailConfirmed}</li>
-      </ul>
-    </ul>
+    <div>
+      <Divider align="left">Email</Divider>
+      <div css={{ paddingLeft: "40px" }}>{data.email}</div>
+      <Divider align="left">Profile Activated</Divider>
+      <div css={{ paddingLeft: "40px" }}> {data.isEmailConfirmed}</div>
+    </div>
   );
 
   const tableActionsColBodyTemplate = (data: UserModel) => (
     <div>
       <PrimeSmallButton
         label={isSmallDevice ? "" : "Remove"}
-        icon={isSmallDevice ? "pi pi-user-minus" : ""}
+        icon="pi pi-user-minus"
         className="p-button-danger"
         onClick={() =>
           confirmDialog({
@@ -108,7 +106,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
         globalFilter={globalFilter}
         header={tableHeader}
       >
-        <Column expander style={{ width: "1em" }} />
+        <Column expander />
         <Column sortable field="firstName" header="First Name" />
         <Column sortable field="lastName" header="Last Name" />
         <Column sortable field="vacationsLimit" header="Unused Vacation Days" />

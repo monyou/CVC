@@ -21,7 +21,7 @@ import { useSelector } from "react-redux";
 import VacationTypesLegend from "../../../../components/VacationTypesLegend";
 import { useQuery } from "react-query";
 import { locale } from "primereact/api";
-import { vacationTypesColors } from "../../../../styles/colors";
+import colors, { vacationTypesColors } from "../../../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useMutation } from "react-query";
 import { VacationStatus } from "../../../../utils/enums";
@@ -37,6 +37,7 @@ import {
   UserSubmitVacationFormikProps,
   UserSubmitVacationProps,
 } from "../../types/user.type";
+import { Chip } from "primereact/chip";
 
 function UserDashboard() {
   locale("bg");
@@ -125,7 +126,7 @@ function UserDashboard() {
   ): void {
     const requestModel: UserSubmitVacationProps = {
       userId: reduxUser.sub,
-      username: reduxUser.name,
+      username: `${reduxUser.firstName} ${reduxUser.lastName}`,
       description: values.description,
       vacationType: values.vacationType,
       days: values.dates.map((d: Date) => d.getTime()),
@@ -140,14 +141,18 @@ function UserDashboard() {
   return (
     <div>
       <div css={{ marginBottom: 10 }}>
-        Vacations Left: {reduxUser.vacationLimit}
+        <Chip
+          css={{ backgroundColor: colors.primaryColor, color: "white" }}
+          label={reduxUser.vacationLimit}
+          icon="pi pi-calendar"
+        />
       </div>
       <div css={{ marginBottom: 30 }}>
         <VacationTypesLegend vacationTypes={vacationTypes} />
       </div>
 
       <EventCalendar
-        styles={{ height: "calc(100vh - 190px)" }}
+        styles={{ height: "calc(100vh - 200px)" }}
         eventsList={vacationsCalendarEvents}
         eventStyling={(e: any) => ({
           style: {

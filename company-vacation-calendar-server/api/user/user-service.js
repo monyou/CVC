@@ -501,7 +501,10 @@ async function updateUserVacation({ vacation }) {
           .collection("users")
           .doc(vacation.userId)
           .update({
-            vacationLimit: user.vacationLimit - vacation.days.length,
+            vacationLimit:
+              vacation.vacationType.name === "Paid"
+                ? user.vacationLimit - vacation.days.length
+                : user.vacationLimit,
             vacations: admin.FieldValue.arrayUnion(vacation),
           });
       } else {
