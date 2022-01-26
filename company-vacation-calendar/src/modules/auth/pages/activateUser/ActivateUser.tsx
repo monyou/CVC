@@ -68,7 +68,7 @@ function ActivateUser() {
       <Card
         css={{
           minWidth: "300px",
-          width: "30%",
+          width: "clamp(300px, 95%, 500px)",
           position: "absolute",
           ...centerDivOnScreen,
           ...isSmallDeviceMediaQuery({ width: "95%" }),

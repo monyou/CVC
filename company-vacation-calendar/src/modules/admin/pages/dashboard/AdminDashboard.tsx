@@ -19,11 +19,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Formik } from "formik";
-import {
-  inputErrorMsg,
-  isSmallDeviceMediaQuery,
-  PrimeButton,
-} from "../../../../styles/common";
+import { inputErrorMsg, PrimeButton } from "../../../../styles/common";
 import { Roles } from "../../../../utils/enums";
 import EventCalendar from "../../../../components/EventCalendar";
 import VacationTypesLegend from "../../../../components/VacationTypesLegend";
@@ -239,7 +235,7 @@ function AdminDashboard() {
       <Dialog
         header="Add employee"
         visible={openAddUserDialog}
-        css={{ width: "50%", ...isSmallDeviceMediaQuery({ width: "95%" }) }}
+        css={{ width: "clamp(300px, 95%, 500px)" }}
         contentStyle={{ padding: "10px 25px 40px 25px" }}
         onHide={() => setOpenAddUserDialog(false)}
       >

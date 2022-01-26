@@ -107,7 +107,7 @@ function Login() {
                   <InputText
                     id="email"
                     name="email"
-                    type="text"
+                    type="email"
                     value={values.email}
                     onChange={handleChange}
                   />

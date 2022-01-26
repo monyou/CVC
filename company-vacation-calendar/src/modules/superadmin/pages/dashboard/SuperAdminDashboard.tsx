@@ -14,11 +14,7 @@ import {
   getAllCompanies,
 } from "../../../../services/company.service";
 import { createUser, getAllUsers } from "../../../../services/user.service";
-import {
-  inputErrorMsg,
-  isSmallDeviceMediaQuery,
-  PrimeButton,
-} from "../../../../styles/common";
+import { inputErrorMsg, PrimeButton } from "../../../../styles/common";
 import { Roles } from "../../../../utils/enums";
 import {
   CreateCompanyWithAdminFormikErrors,
@@ -122,7 +118,7 @@ function SuperAdminDashboard() {
       <Dialog
         header="Add company"
         visible={openAddCompanyDialog}
-        css={{ width: "50%", ...isSmallDeviceMediaQuery({ width: "95%" }) }}
+        css={{ width: "clamp(300px, 95%, 500px)" }}
         contentStyle={{ padding: "10px 25px 40px 25px" }}
         onHide={() => setOpenAddCompanyDialog(false)}
       >
