@@ -65,7 +65,7 @@ function Subscribe() {
     <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
       <Card
         css={{
-          width: "clamp(300px, 95%, 500px)",
+          width: "clamp(300px, 95%, 800px)",
           maxHeight: "95%",
           overflowY: "auto",
           position: "absolute",
