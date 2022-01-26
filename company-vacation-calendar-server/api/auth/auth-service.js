@@ -188,7 +188,7 @@ async function subscribe({
       <tr>
         <td style="padding-right: 0px;padding-left: 0px;" align="center">
           
-          <img align="center" border="0" src="cid:cvc-logo" alt="cvc-logo" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 30%;max-width: 144px;" width="144"/>
+          <img align="center" border="0" src="https://i.postimg.cc/hvv3Kxt3/cvc-logo.png" alt="cvc-logo" title="" style="outline: none;text-decoration: none;-ms-interpolation-mode: bicubic;clear: both;display: inline-block !important;border: none;height: auto;float: none;width: 30%;max-width: 144px;" width="144"/>
           
         </td>
       </tr>
@@ -536,13 +536,6 @@ async function subscribe({
       to: process.env.SUPER_ADMIN_EMAILS.split(","),
       subject: "CVC Platform | Subscription Request",
       html: emailContent,
-      attachments: [
-        {
-          filename: "cvc-logo.png",
-          path: `${process.env.SERVER_URL}cvc-logo.png`,
-          cid: "cvc-logo",
-        },
-      ],
     };
 
     mailer.sendMail(mailOptions, function (error, info) {
