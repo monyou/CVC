@@ -308,7 +308,7 @@ async function createUser({
         <a href="${
           process.env.CREATE_NEW_ACC_LINK
         }/${email}/${id}/${securityKey}" target="_blank" style="box-sizing: border-box;display: inline-block;font-family:arial,helvetica,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #4090c1; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:40%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;">
-          <span style="display:block;padding:10px 20px;line-height:120%;"><strong><span style="font-size: 16px; line-height: 19.2px; font-family: 'courier new', courier;">Login</span></strong></span>
+          <span style="display:block;padding:10px 20px;line-height:120%;"><strong><span style="font-size: 16px; line-height: 19.2px; font-family: 'courier new', courier;">Activate</span></strong></span>
         </a>
       <!--[if mso]></center></v:roundrect></td></tr></table><![endif]-->
     </div>

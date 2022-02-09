@@ -1,24 +1,30 @@
-const {
-    firestore
-} = require("../../helpers/firebase");
+const axios = require("axios");
+
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
 
 async function getAllHolidays() {
-    try {
-        const holidaysQuery = await firestore.collection("holidays").get();
-        const holidays = holidaysQuery.docs.map(d => {
-            let holiday = d.data();
+  try {
+    const {
+      data: {
+        response: { holidays: holidaysRes },
+      },
+    } = await axios.get(
+      `https://calendarific.com/api/v2/holidays?&api_key=${
+        process.env.HOLIDAY_API_KEY
+      }&country=BG&year=${new Date().getFullYear()}&type=national`
+    );
+    const holidays = holidaysRes.map((h) => new Date(h.date.iso).getTime());
 
-            return holiday;
-        })
-
-        return {
-            holidays,
-        };
-    } catch (error) {
-        console.log(error);
-    }
+    return {
+      holidays,
+    };
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 module.exports = {
-    getAllHolidays,
+  getAllHolidays,
 };

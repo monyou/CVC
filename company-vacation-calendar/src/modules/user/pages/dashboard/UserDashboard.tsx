@@ -29,7 +29,6 @@ import moment from "moment";
 import { selectUser } from "../../../../redux/slices/user.slice";
 import VacationModel from "../../../../dtos/vacation.dto";
 import VacationTypeModel from "../../../../dtos/vacationType.dto";
-import HolidayModel from "../../../../dtos/holiday.dto";
 import { toast } from "react-toastify";
 import {
   UserEventInfoProps,
@@ -58,7 +57,7 @@ function UserDashboard() {
       initialData: [],
     }
   );
-  const { data: holidays } = useQuery<Array<HolidayModel>>(
+  const { data: holidays } = useQuery<Array<number>>(
     "holidays",
     () => getAllHolidays().then((data) => data.holidays),
     {
@@ -114,9 +113,7 @@ function UserDashboard() {
       .map((d) => new Date(d)) || [];
 
   const disabledDaysForApplicationLeave = [
-    ...(holidays
-      ?.find((h) => h.year === new Date().getFullYear())
-      ?.dates.map((d) => new Date(d)) || []),
+    ...(holidays?.map((d) => new Date(d)) || []),
     ...userPendingVacationApplications,
   ];
 

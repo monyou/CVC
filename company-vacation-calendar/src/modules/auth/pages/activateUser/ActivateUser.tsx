@@ -128,7 +128,7 @@ function ActivateUser() {
                     }}
                   />
                 ) : (
-                  "Enter"
+                  "Activate"
                 )}
               </PrimeButton>
             </form>
