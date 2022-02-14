@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const { firestore } = require("../../helpers/firebase");
+const knex = require("../../helpers/knex-config");
 const { decrypt } = require("../../helpers/crypto");
 const { mailer } = require("../../helpers/mailer");
 
@@ -9,24 +9,49 @@ if (process.env.NODE_ENV !== "production") {
 
 async function authenticate({ email, password }) {
   try {
-    const userQuery = await firestore
-      .collection("users")
-      .where("email", "==", email)
-      .get();
-    const user = userQuery.docs[0].data();
+    const [user] = await knex
+      .db("Users")
+      .join("Companies", "Users.CompanyId", "Companies.Id")
+      .join("Roles", "Users.RoleId", "Roles.Id")
+      .where({ Email: email })
+      .select(
+        "Users.Id",
+        "Users.Email",
+        "Users.Password",
+        "Users.FirstName",
+        "Users.LastName",
+        "Users.VacationLimit",
+        "Companies.Id as Company_Id",
+        "Companies.Name as Company_Name",
+        "Companies.Bulstat as Company_Bulstat",
+        "Companies.YearVacationLimit as Company_YearVacationLimit",
+        "Roles.Id as Role_Id",
+        "Roles.Name as Role_Name"
+      );
 
-    if (user !== null) {
-      let decryptedUserPassword = decrypt(user.password);
-      if (decryptedUserPassword == password) {
+    if (user) {
+      let decryptedUserPassword = decrypt({
+        content: user.Password.split(",")[0],
+        iv: user.Password.split(",")[1],
+      });
+      if (decryptedUserPassword === password) {
         const token = jwt.sign(
           {
-            sub: user.id,
-            role: user.role,
-            company: user.company,
-            email: user.email,
-            firstName: user.firstName,
-            lastName: user.lastName,
-            vacationLimit: user.vacationLimit,
+            sub: user.Id,
+            role: {
+              id: user.Role_Id,
+              name: user.Role_Name,
+            },
+            company: {
+              id: user.Company_Id,
+              name: user.Company_Name,
+              bulstat: user.Company_Bulstat,
+              yearVacationLimit: user.Company_YearVacationLimit,
+            },
+            email: user.Email,
+            firstName: user.FirstName,
+            lastName: user.LastName,
+            vacationLimit: user.VacationLimit,
           },
           process.env.AUTH_CONFIG_SECRET
         );
@@ -51,21 +76,15 @@ async function subscribe({
   yearVacationLimit,
 }) {
   try {
-    const companyExistsQuery = await firestore
-      .collection("companies")
-      .where("bulstat", "==", bulstat)
-      .get();
+    const [company] = await knex.db("Companies").where({ Bulstat: bulstat });
 
-    if (!companyExistsQuery.empty) {
+    if (company) {
       return false;
     }
 
-    const userExistsQuery = await firestore
-      .collection("users")
-      .where("email", "==", email)
-      .get();
+    const [user] = await knex.db("Users").where({ Email: email });
 
-    if (!userExistsQuery.empty) {
+    if (user) {
       return false;
     }
 

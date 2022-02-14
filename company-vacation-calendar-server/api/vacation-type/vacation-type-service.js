@@ -1,24 +1,19 @@
-const {
-    firestore
-} = require("../../helpers/firebase");
+const knex = require("../../helpers/knex-config");
 
 async function getAllVacationTypes() {
-    try {
-        const vacationTypesQuery = await firestore.collection("vacation-types").get();
-        const vacationTypes = vacationTypesQuery.docs.map(d => {
-            let vacationType = d.data();
+  try {
+    const vacationTypes = await knex.db("VacationTypes");
 
-            return vacationType;
-        })
+    return {
+      vacationTypes: vacationTypes.map((v) => ({ id: v.Id, name: v.Name })),
+    };
+  } catch (error) {
+    console.log(error);
+  }
 
-        return {
-            vacationTypes,
-        };
-    } catch (error) {
-        console.log(error);
-    }
+  return null;
 }
 
 module.exports = {
-    getAllVacationTypes,
+  getAllVacationTypes,
 };

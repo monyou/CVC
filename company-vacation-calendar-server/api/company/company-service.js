@@ -1,71 +1,50 @@
-const { firestore } = require("../../helpers/firebase");
-const { v4: uuidv4 } = require("uuid");
+const knex = require("../../helpers/knex-config");
 
 async function getAllCompanies() {
   try {
-    const companiesQuery = await firestore.collection("companies").get();
-    const companies = companiesQuery.docs
-      .map((d) => {
-        let company = d.data();
-
-        return company;
-      })
-      .filter((company) => company.name !== "SD Internal");
+    const companies = await knex
+      .db("Companies")
+      .where("Name", "<>", "CVC Internal");
 
     return {
-      companies,
+      companies: companies.map((c) => ({
+        id: c.Id,
+        name: c.Name,
+        bulstat: c.Bulstat,
+        yearVacationLimit: c.YearVacationLimit,
+      })),
     };
   } catch (error) {
     console.log(error);
   }
+
+  return null;
 }
 
 async function createCompany({ bulstat, name, yearVacationLimit }) {
   try {
-    const id = uuidv4();
-
-    const companyExistsQuery = await firestore
-      .collection("companies")
-      .where("bulstat", "==", bulstat)
-      .get();
-
-    if (!companyExistsQuery.empty) {
-      return null;
-    }
-
-    await firestore.collection("companies").doc(id).set({
-      id,
-      bulstat,
-      name,
-      yearVacationLimit,
-    });
+    const [{ Id: companyId }] = await knex.db("Companies").insert(
+      {
+        Bulstat: bulstat,
+        Name: name,
+        YearVacationLimit: yearVacationLimit,
+      },
+      ["Id"]
+    );
 
     return {
-      id,
+      id: companyId,
     };
   } catch (error) {
     console.log(error);
   }
+
+  return null;
 }
 
 async function deleteCompany({ companyId }) {
   try {
-    const usersInCompanyQuery = await firestore
-      .collection("users")
-      .where("company.id", "==", companyId)
-      .get();
-    const usersToDeleteForCompany = usersInCompanyQuery.docs
-      .map((d) => d.data())
-      .filter((u) => u.company.id === companyId)
-      .map((u) => firestore.collection("users").doc(u.id));
-
-    await firestore.runTransaction(async (t) => {
-      t.delete(firestore.collection("companies").doc(companyId));
-
-      usersToDeleteForCompany.forEach((userId) => {
-        t.delete(userId);
-      });
-    });
+    await knex.db("Companies").where({ Id: companyId }).del();
 
     return true;
   } catch (error) {

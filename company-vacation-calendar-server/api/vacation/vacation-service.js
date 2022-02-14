@@ -1,36 +1,89 @@
-const { firestore } = require("../../helpers/firebase");
-const userService = require("../user/user-service");
-const { v4: uuidv4 } = require("uuid");
-
+const knex = require("../../helpers/knex-config");
 const statuses = require("../../helpers/vacation-status");
 
 async function getAllVacations() {
-  let vacations = [];
   try {
-    const response = await userService.getAllUsers();
+    const vacations = await knex
+      .db("Vacations")
+      .join(
+        "VacationStatuses",
+        "Vacations.VacationStatusId",
+        "VacationStatuses.Id"
+      )
+      .join("VacationTypes", "Vacations.VacationTypeId", "VacationTypes.Id")
+      .select(
+        "Vacations.Id",
+        "Vacations.UserId",
+        "Vacations.Username",
+        "Vacations.Description",
+        "Vacations.Days",
+        "VacationStatuses.Id as VacationStatus_Id",
+        "VacationStatuses.Name as VacationStatus_Name",
+        "VacationTypes.Id as VacationType_Id",
+        "VacationTypes.Id as VacationType_Name"
+      );
 
-    vacations = response.users
-      .filter((user) => user.vacations.length !== 0)
-      .map((user) => user.vacations)
-      .flat();
+    return vacations.map((v) => ({
+      id: v.Id,
+      userId: v.UserId,
+      username: v.Username,
+      days: v.Days.split(",").map((d) => +d),
+      description: v.Description,
+      status: {
+        id: v.VacationStatus_Id,
+        name: v.VacationStatus_Name,
+      },
+      vacationType: {
+        id: v.VacationType_Id,
+        name: v.VacationType_Name,
+      },
+    }));
   } catch (error) {
     console.log(error);
   }
 
-  return vacations;
+  return null;
 }
 
 async function getVacationById({ id }) {
   try {
-    const response = await userService.getAllUsers();
+    const [vacation] = await knex
+      .db("Vacations")
+      .join(
+        "VacationStatuses",
+        "Vacations.VacationStatusId",
+        "VacationStatuses.Id"
+      )
+      .join("VacationTypes", "Vacations.VacationTypeId", "VacationTypes.Id")
+      .where({ "Vacations.Id": id })
+      .select(
+        "Vacations.Id",
+        "Vacations.UserId",
+        "Vacations.Username",
+        "Vacations.Description",
+        "Vacations.Days",
+        "VacationStatuses.Id as VacationStatus_Id",
+        "VacationStatuses.Name as VacationStatus_Name",
+        "VacationTypes.Id as VacationType_Id",
+        "VacationTypes.Id as VacationType_Name"
+      );
 
-    vacations = response.users
-      .filter((user) => user.vacations.length !== 0)
-      .map((user) => user.vacations)
-      .flat();
-    vacation = vacations.filter((vacation) => vacation.id === id)[0];
     if (vacation) {
-      return vacation;
+      return {
+        id: vacation.Id,
+        userId: vacation.UserId,
+        username: vacation.Username,
+        days: vacation.Days.split(",").map((d) => +d),
+        description: vacation.Description,
+        status: {
+          id: vacation.VacationStatus_Id,
+          name: vacation.VacationStatus_Name,
+        },
+        vacationType: {
+          id: vacation.VacationType_Id,
+          name: vacation.VacationType_Name,
+        },
+      };
     }
   } catch (error) {
     console.log(error);
@@ -40,36 +93,95 @@ async function getVacationById({ id }) {
 }
 
 async function getVacationsByUserId({ userId }) {
-  let vacations = [];
   try {
-    const user = await userService.getUserById({
-      id: userId,
-    });
+    const vacations = await knex
+      .db("Vacations")
+      .join(
+        "VacationStatuses",
+        "Vacations.VacationStatusId",
+        "VacationStatuses.Id"
+      )
+      .join("VacationTypes", "Vacations.VacationTypeId", "VacationTypes.Id")
+      .where({ "Vacations.UserId": userId })
+      .select(
+        "Vacations.Id",
+        "Vacations.UserId",
+        "Vacations.Username",
+        "Vacations.Description",
+        "Vacations.Days",
+        "VacationStatuses.Id as VacationStatus_Id",
+        "VacationStatuses.Name as VacationStatus_Name",
+        "VacationTypes.Id as VacationType_Id",
+        "VacationTypes.Id as VacationType_Name"
+      );
 
-    vacations = user.vacations;
+    return vacations.map((v) => ({
+      id: v.Id,
+      userId: v.UserId,
+      username: v.Username,
+      days: v.Days.split(",").map((d) => +d),
+      description: v.Description,
+      status: {
+        id: v.VacationStatus_Id,
+        name: v.VacationStatus_Name,
+      },
+      vacationType: {
+        id: v.VacationType_Id,
+        name: v.VacationType_Name,
+      },
+    }));
   } catch (error) {
     console.log(error);
   }
 
-  return vacations;
+  return null;
 }
 
 async function getVacationsByCompanyId({ companyId }) {
-  let vacations = [];
   try {
-    const response = await userService.getAllUsers();
-
-    vacations = response.users
-      .filter(
-        (user) => user.vacations.length !== 0 && user.company.id === companyId
+    const vacations = await knex
+      .db("Vacations")
+      .join(
+        "VacationStatuses",
+        "Vacations.VacationStatusId",
+        "VacationStatuses.Id"
       )
-      .map((user) => user.vacations)
-      .flat();
+      .join("VacationTypes", "Vacations.VacationTypeId", "VacationTypes.Id")
+      .join("Users", "Vacations.UserId", "Users.Id")
+      .join("Companies", "Users.CompanyId", "Companies.Id")
+      .where({ "Companies.Id": companyId })
+      .select(
+        "Vacations.Id",
+        "Vacations.UserId",
+        "Vacations.Username",
+        "Vacations.Description",
+        "Vacations.Days",
+        "VacationStatuses.Id as VacationStatus_Id",
+        "VacationStatuses.Name as VacationStatus_Name",
+        "VacationTypes.Id as VacationType_Id",
+        "VacationTypes.Id as VacationType_Name"
+      );
+
+    return vacations.map((v) => ({
+      id: v.Id,
+      userId: v.UserId,
+      username: v.Username,
+      days: v.Days.split(",").map((d) => +d),
+      description: v.Description,
+      status: {
+        id: v.VacationStatus_Id,
+        name: v.VacationStatus_Name,
+      },
+      vacationType: {
+        id: v.VacationType_Id,
+        name: v.VacationType_Name,
+      },
+    }));
   } catch (error) {
     console.log(error);
   }
 
-  return vacations;
+  return null;
 }
 
 async function createVacation({
@@ -79,59 +191,77 @@ async function createVacation({
   vacationType,
   days,
 }) {
-  let result = false;
-
   try {
-    const user = await userService.getUserById({
-      id: userId,
-    });
+    const [user] = await knex
+      .db("Users")
+      .where({ Id: userId })
+      .select("VacationLimit");
 
-    if (user && user.vacationLimit >= days.length) {
-      const id = uuidv4();
-      const vacation = {
-        id,
-        username,
-        description,
-        vacationType,
-        days,
-        status: statuses.Pending,
-        userId,
-      };
+    const [vacationStatus] = await knex
+      .db("VacationStatuses")
+      .where({ Name: statuses.Pending });
 
-      result = await userService.addUserVacation({
-        userId,
-        vacation,
+    if (user && vacationStatus && user.VacationLimit >= days.length) {
+      await knex.db("Vacations").insert({
+        Username: username,
+        Description: description,
+        Days: days.join(","),
+        VacationStatusId: vacationStatus.id,
+        VacationTypeId: vacationType.id,
+        UserId: userId,
       });
+
+      return true;
     }
   } catch (error) {
     console.log(error);
   }
 
-  return result;
+  return false;
 }
 
-async function updateVacation({ id, description, vacationType, days, status }) {
-  let result = false;
+async function updateVacation({ id, status }) {
   try {
-    let vacation = await getVacationById({
-      id,
-    });
+    const [vacationStatus] = await knex
+      .db("VacationStatuses")
+      .where({ Name: status });
 
-    vacation.description =
-      description != null ? description : vacation.description;
-    vacation.vacationType =
-      vacationType != null ? vacationType : vacation.vacationType;
-    vacation.days = days != null ? days : vacation.days;
-    vacation.status = status != null ? status : vacation.status;
+    const [vacation] = await knex
+      .db("Vacations")
+      .join("VacationTypes", "Vacations.VacationTypeId", "VacationTypes.Id")
+      .join("Users", "Vacations.UserId", "User.Id")
+      .where({ "Vacations.Id": id })
+      .select(
+        "Vacation.*",
+        "VacationTypes.Name as VacationType_Name",
+        "Users.VacationLimit as User_VacationLimit"
+      );
 
-    result = await userService.updateUserVacation({
-      vacation,
-    });
+    if (vacation && vacationStatus) {
+      await knex.db("Vacations").where({ Id: id }).update({
+        VacationStatusId: vacationStatus.Id,
+      });
+
+      if (
+        status === statuses.Accepted &&
+        vacation.VacationType_Name === "Paid"
+      ) {
+        await knex
+          .db("Users")
+          .where({ Id: vacation.UserId })
+          .update({
+            VacationLimit:
+              vacation.User_VacationLimit - vacation.Days.split(",").length,
+          });
+      }
+
+      return true;
+    }
   } catch (error) {
     console.log(error);
   }
 
-  return result;
+  return false;
 }
 
 module.exports = {

@@ -1,24 +1,19 @@
-const {
-    firestore
-} = require("../../helpers/firebase");
+const knex = require("../../helpers/knex-config");
 
 async function getAllRoles() {
-    try {
-        const rolesQuery = await firestore.collection("roles").get();
-        const roles = rolesQuery.docs.map(d => {
-            let role = d.data();
+  try {
+    const roles = await knex.db("Roles");
 
-            return role;
-        })
+    return {
+      roles: roles.map((v) => ({ id: v.Id, name: v.Name })),
+    };
+  } catch (error) {
+    console.log(error);
+  }
 
-        return {
-            roles,
-        };
-    } catch (error) {
-        console.log(error);
-    }
+  return null;
 }
 
 module.exports = {
-    getAllRoles,
+  getAllRoles,
 };

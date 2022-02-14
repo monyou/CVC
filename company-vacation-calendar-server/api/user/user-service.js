@@ -1,8 +1,7 @@
-const { firestore, admin } = require("../../helpers/firebase");
+const knex = require("../../helpers/knex-config");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt } = require("../../helpers/crypto");
 const { mailer } = require("../../helpers/mailer");
-const statuses = require("../../helpers/vacation-status");
 const roles = require("../../helpers/roles");
 
 if (process.env.NODE_ENV !== "production") {
@@ -11,57 +10,161 @@ if (process.env.NODE_ENV !== "production") {
 
 async function getUserById({ id }) {
   try {
-    const userQuery = await firestore.collection("users").doc(id).get();
-    const user = userQuery.data();
-    const { password, ...userWithoutPassword } = user;
+    const [user] = await knex
+      .db("Users")
+      .join("Companies", "Users.CompanyId", "Companies.Id")
+      .join("Roles", "Users.RoleId", "Roles.Id")
+      .where({ Id: id })
+      .select(
+        "Users.Id",
+        "Users.Email",
+        "Users.FirstName",
+        "Users.LastName",
+        "Users.IsActive",
+        "Users.IsEmailConfirmed",
+        "Users.VacationLimit",
+        "Users.SecurityKey",
+        "Companies.Id as Company_Id",
+        "Companies.Name as Company_Name",
+        "Companies.Bulstat as Company_Bulstat",
+        "Companies.YearVacationLimit as Company_YearVacationLimit",
+        "Roles.Id as Role_Id",
+        "Roles.Name as Role_Name"
+      );
 
-    return {
-      ...userWithoutPassword,
-    };
+    if (user) {
+      return {
+        id: user.Id,
+        email: user.Email,
+        firstName: user.FirstName,
+        lastName: user.LastName,
+        isActive: user.IsActive,
+        isEmailConfirmed: user.IsEmailConfirmed,
+        vacationLimit: user.VacationLimit,
+        securityKey: user.SecurityKey,
+        role: {
+          id: user.Role_Id,
+          name: user.Role_Name,
+        },
+        company: {
+          id: user.Company_Id,
+          name: user.Company_Name,
+          bulstat: user.Company_Bulstat,
+          yearVacationLimit: user.Company_YearVacationLimit,
+        },
+      };
+    }
   } catch (error) {
     console.log(error);
   }
+
+  return null;
 }
 
 async function getUsersByCompanyId({ companyId }) {
   try {
-    const userQuery = await firestore
-      .collection("users")
-      .where("company.id", "==", companyId)
-      .get();
-    const users = userQuery.docs.map((d) => {
-      let user = d.data();
-      const { password, ...userWithoutPassword } = user;
-
-      return userWithoutPassword;
-    });
+    const users = await knex
+      .db("Users")
+      .join("Companies", "Users.CompanyId", "Companies.Id")
+      .join("Roles", "Users.RoleId", "Roles.Id")
+      .where({ CompanyId: companyId })
+      .select(
+        "Users.Id",
+        "Users.Email",
+        "Users.FirstName",
+        "Users.LastName",
+        "Users.IsActive",
+        "Users.IsEmailConfirmed",
+        "Users.VacationLimit",
+        "Users.SecurityKey",
+        "Companies.Id as Company_Id",
+        "Companies.Name as Company_Name",
+        "Companies.Bulstat as Company_Bulstat",
+        "Companies.YearVacationLimit as Company_YearVacationLimit",
+        "Roles.Id as Role_Id",
+        "Roles.Name as Role_Name"
+      );
 
     return {
-      users,
+      users: users.map((u) => ({
+        id: u.Id,
+        email: u.Email,
+        firstName: u.FirstName,
+        lastName: u.LastName,
+        isActive: u.IsActive,
+        isEmailConfirmed: u.IsEmailConfirmed,
+        vacationLimit: u.VacationLimit,
+        securityKey: u.SecurityKey,
+        role: {
+          id: u.Role_Id,
+          name: u.Role_Name,
+        },
+        company: {
+          id: u.Company_Id,
+          name: u.Company_Name,
+          bulstat: u.Company_Bulstat,
+          yearVacationLimit: u.Company_YearVacationLimit,
+        },
+      })),
     };
   } catch (error) {
     console.log(error);
   }
+
+  return null;
 }
 
 async function getAllUsers() {
   try {
-    const usersQuery = await firestore.collection("users").get();
-    const users = usersQuery.docs
-      .map((d) => {
-        let user = d.data();
-        const { password, ...userWithoutPassword } = user;
-
-        return userWithoutPassword;
-      })
-      .filter((user) => user.role.name !== roles.SuperAdmin);
+    const users = await knex
+      .db("Users")
+      .join("Companies", "Users.CompanyId", "Companies.Id")
+      .join("Roles", "Users.RoleId", "Roles.Id")
+      .where("Roles.Name", "<>", roles.SuperAdmin)
+      .select(
+        "Users.Id",
+        "Users.Email",
+        "Users.FirstName",
+        "Users.LastName",
+        "Users.IsActive",
+        "Users.IsEmailConfirmed",
+        "Users.VacationLimit",
+        "Users.SecurityKey",
+        "Companies.Id as Company_Id",
+        "Companies.Name as Company_Name",
+        "Companies.Bulstat as Company_Bulstat",
+        "Companies.YearVacationLimit as Company_YearVacationLimit",
+        "Roles.Id as Role_Id",
+        "Roles.Name as Role_Name"
+      );
 
     return {
-      users,
+      users: users.map((u) => ({
+        id: u.Id,
+        email: u.Email,
+        firstName: u.FirstName,
+        lastName: u.LastName,
+        isActive: u.IsActive,
+        isEmailConfirmed: u.IsEmailConfirmed,
+        vacationLimit: u.VacationLimit,
+        securityKey: u.SecurityKey,
+        role: {
+          id: u.Role_Id,
+          name: u.Role_Name,
+        },
+        company: {
+          id: u.Company_Id,
+          name: u.Company_Name,
+          bulstat: u.Company_Bulstat,
+          yearVacationLimit: u.Company_YearVacationLimit,
+        },
+      })),
     };
   } catch (error) {
     console.log(error);
   }
+
+  return null;
 }
 
 async function createUser({
@@ -72,52 +175,39 @@ async function createUser({
   companyName,
 }) {
   try {
-    const id = uuidv4();
     const securityKey = uuidv4();
-    let encryptedPassword = encrypt(id);
+    let encryptedPassword = encrypt(process.env.NEW_ACC_PASS);
 
-    const userExistsQuery = await firestore
-      .collection("users")
-      .where("email", "==", email)
-      .get();
+    const [role] = await knex.db("Roles").where({ Name: roleName });
 
-    if (!userExistsQuery.empty) {
-      return null;
-    }
+    const [company] = await knex
+      .db("Companies")
+      .where({ Name: companyName })
+      .select("Id", "YearVacationLimit");
 
-    const roleQuery = await firestore
-      .collection("roles")
-      .where("name", "==", roleName)
-      .get();
-    const role = roleQuery.docs[0].data();
+    if (role && company) {
+      const [{ Id: userId }] = await knex.db("Users").insert(
+        {
+          Email: email,
+          FirstName: firstName,
+          LastName: lastName,
+          IsActive: 1,
+          IsEmailConfirmed: 0,
+          Password: `${encryptedPassword.content},${encryptedPassword.iv}`,
+          VacationLimit: company.YearVacationLimit,
+          SecurityKey: securityKey,
+          CompanyId: company.Id,
+          RoleId: role.Id,
+        },
+        ["Id"]
+      );
 
-    const companyQuery = await firestore
-      .collection("companies")
-      .where("name", "==", companyName)
-      .get();
-    const company = companyQuery.docs[0].data();
+      const userRoleContent =
+        role.Name === roles.User
+          ? `Your manager created a profile in 'Company Vacation Calendar' platform for you. You only have to click the <strong>button</strong> bellow or this <strong><a rel="noopener" href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${userId}/${securityKey}" target="_blank">link</a></strong> and type your password to enjoy the easy process of applying for leave from work!`
+          : `We from 'Company Vacation Calendar' platform created a profile for you. You only have to click the <strong>button</strong> bellow or this <strong><a rel="noopener" href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${userId}/${securityKey}" target="_blank">link</a></strong> and type your password to enjoy the easy process of managing employees applications for leave!`;
 
-    await firestore.collection("users").doc(id).set({
-      id,
-      email,
-      password: encryptedPassword,
-      firstName,
-      lastName,
-      role,
-      company,
-      isActive: true,
-      isEmailConfirmed: false,
-      securityKey,
-      vacationLimit: company.yearVacationLimit,
-      vacations: [],
-    });
-
-    const userRoleContent =
-      role.name === roles.User
-        ? `Your manager created a profile in 'Company Vacation Calendar' platform for you. You only have to click the <strong>button</strong> bellow or this <strong><a rel="noopener" href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">link</a></strong> and type your password to enjoy the easy process of applying for leave from work!`
-        : `We from 'Company Vacation Calendar' platform created a profile for you. You only have to click the <strong>button</strong> bellow or this <strong><a rel="noopener" href="${process.env.CREATE_NEW_ACC_LINK}/${email}/${id}/${securityKey}" target="_blank">link</a></strong> and type your password to enjoy the easy process of managing employees applications for leave!`;
-
-    const emailContent = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+      const emailContent = `<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
     <head>
     <!--[if gte mso 9]>
@@ -304,10 +394,10 @@ async function createUser({
     <div align="center">
       <!--[if mso]><table width="100%" cellpadding="0" cellspacing="0" border="0" style="border-spacing: 0; border-collapse: collapse; mso-table-lspace:0pt; mso-table-rspace:0pt;font-family:arial,helvetica,sans-serif;"><tr><td style="font-family:arial,helvetica,sans-serif;" align="center"><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${
         process.env.CREATE_NEW_ACC_LINK
-      }/${email}/${id}/${securityKey}" style="height:39px; v-text-anchor:middle; width:192px;" arcsize="10.5%" stroke="f" fillcolor="#4090c1"><w:anchorlock/><center style="color:#FFFFFF;font-family:arial,helvetica,sans-serif;"><![endif]-->
+      }/${email}/${userId}/${securityKey}" style="height:39px; v-text-anchor:middle; width:192px;" arcsize="10.5%" stroke="f" fillcolor="#4090c1"><w:anchorlock/><center style="color:#FFFFFF;font-family:arial,helvetica,sans-serif;"><![endif]-->
         <a href="${
           process.env.CREATE_NEW_ACC_LINK
-        }/${email}/${id}/${securityKey}" target="_blank" style="box-sizing: border-box;display: inline-block;font-family:arial,helvetica,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #4090c1; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:40%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;">
+        }/${email}/${userId}/${securityKey}" target="_blank" style="box-sizing: border-box;display: inline-block;font-family:arial,helvetica,sans-serif;text-decoration: none;-webkit-text-size-adjust: none;text-align: center;color: #FFFFFF; background-color: #4090c1; border-radius: 4px;-webkit-border-radius: 4px; -moz-border-radius: 4px; width:40%; max-width:100%; overflow-wrap: break-word; word-break: break-word; word-wrap:break-word; mso-border-alt: none;">
           <span style="display:block;padding:10px 20px;line-height:120%;"><strong><span style="font-size: 16px; line-height: 19.2px; font-family: 'courier new', courier;">Activate</span></strong></span>
         </a>
       <!--[if mso]></center></v:roundrect></td></tr></table><![endif]-->
@@ -391,32 +481,35 @@ async function createUser({
     
     `;
 
-    const mailOptions = {
-      from: process.env.EMAIL_SERVICE_AUTH_EMAIL,
-      to: email,
-      subject: "CVC Platform | Account Created",
-      html: emailContent,
-    };
+      const mailOptions = {
+        from: process.env.EMAIL_SERVICE_AUTH_EMAIL,
+        to: email,
+        subject: "CVC Platform | Account Created",
+        html: emailContent,
+      };
 
-    mailer.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-      }
-    });
+      mailer.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+        } else {
+          console.log("Email sent: " + info.response);
+        }
+      });
 
-    return {
-      id,
-    };
+      return {
+        id: userId,
+      };
+    }
   } catch (error) {
     console.log(error);
   }
+
+  return null;
 }
 
 async function deleteUser({ userId }) {
   try {
-    await firestore.collection("users").doc(userId).delete();
+    await knex.db("Users").where({ Id: userId }).del();
 
     return true;
   } catch (error) {
@@ -428,93 +521,24 @@ async function deleteUser({ userId }) {
 
 async function activateUser({ id, password, securityKey }) {
   try {
-    const userQuery = await firestore.collection("users").doc(id).get();
-    const user = userQuery.data();
+    const [user] = await knex
+      .db("Users")
+      .where({ Id: id })
+      .select("SecurityKey", "IsEmailConfirmed");
 
-    if (user.securityKey == securityKey && !user.isEmailConfirmed) {
+    if (
+      user &&
+      user.SecurityKey === securityKey.toUpperCase() &&
+      !user.IsEmailConfirmed
+    ) {
       const encryptedPassword = encrypt(password);
-
-      await firestore.collection("users").doc(id).update({
-        password: encryptedPassword,
-        isEmailConfirmed: true,
-      });
-
-      return true;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-
-  return false;
-}
-
-async function addUserVacation({ userId, vacation }) {
-  try {
-    const userQuery = await firestore.collection("users").doc(userId).get();
-    const user = userQuery.data();
-
-    if (user) {
-      await firestore
-        .collection("users")
-        .doc(userId)
+      await knex
+        .db("Users")
+        .where({ Id: id })
         .update({
-          vacations: admin.FieldValue.arrayUnion(vacation),
+          Password: `${encryptedPassword.content},${encryptedPassword.iv}`,
+          IsEmailConfirmed: 1,
         });
-
-      return true;
-    }
-  } catch (error) {
-    console.log(error);
-  }
-
-  return false;
-}
-
-async function updateUserVacation({ vacation }) {
-  try {
-    const userQuery = await firestore
-      .collection("users")
-      .doc(vacation.userId)
-      .get();
-    const user = userQuery.data();
-
-    if (user) {
-      let oldVacation = user.vacations.filter(
-        (vac) => vac.id === vacation.id
-      )[0];
-      if (vacation.status === statuses.Accepted) {
-        await firestore
-          .collection("users")
-          .doc(vacation.userId)
-          .update({
-            vacations: admin.FieldValue.arrayRemove(oldVacation),
-          });
-
-        await firestore
-          .collection("users")
-          .doc(vacation.userId)
-          .update({
-            vacationLimit:
-              vacation.vacationType.name === "Paid"
-                ? user.vacationLimit - vacation.days.length
-                : user.vacationLimit,
-            vacations: admin.FieldValue.arrayUnion(vacation),
-          });
-      } else {
-        await firestore
-          .collection("users")
-          .doc(vacation.userId)
-          .update({
-            vacations: admin.FieldValue.arrayRemove(oldVacation),
-          });
-
-        await firestore
-          .collection("users")
-          .doc(vacation.userId)
-          .update({
-            vacations: admin.FieldValue.arrayUnion(vacation),
-          });
-      }
 
       return true;
     }
@@ -530,8 +554,6 @@ module.exports = {
   getAllUsers,
   getUserById,
   activateUser,
-  addUserVacation,
-  updateUserVacation,
   getUsersByCompanyId,
   deleteUser,
 };
