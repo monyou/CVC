@@ -1,5 +1,5 @@
 import { VacationTypeModel } from "./vacationType.dto";
-import { VacationStatus } from "../utils/enums";
+import VacationStatusModel from "./vacationStatus.dto";
 
 export interface VacationModel {
   id: string;
@@ -7,7 +7,7 @@ export interface VacationModel {
   username: string;
   days: Array<number>;
   description: string;
-  status: VacationStatus;
+  status: VacationStatusModel;
   vacationType: VacationTypeModel;
 }
 

@@ -92,7 +92,7 @@ function UserDashboard() {
 
   const vacationsCalendarEvents =
     vacationsForCompany
-      ?.filter((x) => x.status === VacationStatus.Accepted)
+      ?.filter((x) => x.status.name === VacationStatus.Accepted)
       .map((v) =>
         v.days.map((d) => ({
           start: new Date(+d),
@@ -104,17 +104,20 @@ function UserDashboard() {
       )
       .flat() || [];
 
-  const userPendingVacationApplications =
+  const userPendingAndAcceptedVacationApplications =
     vacationsForCompany
       ?.filter(
-        (x) => x.status === VacationStatus.Pending && x.userId === reduxUser.sub
+        (x) =>
+          (x.status.name === VacationStatus.Pending ||
+            x.status.name === VacationStatus.Accepted) &&
+          x.userId === reduxUser.sub
       )
       .flatMap((x) => x.days)
       .map((d) => new Date(d)) || [];
 
   const disabledDaysForApplicationLeave = [
     ...(holidays?.map((d) => new Date(d)) || []),
-    ...userPendingVacationApplications,
+    ...userPendingAndAcceptedVacationApplications,
   ];
 
   function handleVacationSubmit(

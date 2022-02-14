@@ -20,7 +20,7 @@ async function getAllVacations() {
         "VacationStatuses.Id as VacationStatus_Id",
         "VacationStatuses.Name as VacationStatus_Name",
         "VacationTypes.Id as VacationType_Id",
-        "VacationTypes.Id as VacationType_Name"
+        "VacationTypes.Name as VacationType_Name"
       );
 
     return vacations.map((v) => ({
@@ -65,7 +65,7 @@ async function getVacationById({ id }) {
         "VacationStatuses.Id as VacationStatus_Id",
         "VacationStatuses.Name as VacationStatus_Name",
         "VacationTypes.Id as VacationType_Id",
-        "VacationTypes.Id as VacationType_Name"
+        "VacationTypes.Name as VacationType_Name"
       );
 
     if (vacation) {
@@ -112,7 +112,7 @@ async function getVacationsByUserId({ userId }) {
         "VacationStatuses.Id as VacationStatus_Id",
         "VacationStatuses.Name as VacationStatus_Name",
         "VacationTypes.Id as VacationType_Id",
-        "VacationTypes.Id as VacationType_Name"
+        "VacationTypes.Name as VacationType_Name"
       );
 
     return vacations.map((v) => ({
@@ -159,7 +159,7 @@ async function getVacationsByCompanyId({ companyId }) {
         "VacationStatuses.Id as VacationStatus_Id",
         "VacationStatuses.Name as VacationStatus_Name",
         "VacationTypes.Id as VacationType_Id",
-        "VacationTypes.Id as VacationType_Name"
+        "VacationTypes.Name as VacationType_Name"
       );
 
     return vacations.map((v) => ({
@@ -206,7 +206,7 @@ async function createVacation({
         Username: username,
         Description: description,
         Days: days.join(","),
-        VacationStatusId: vacationStatus.id,
+        VacationStatusId: vacationStatus.Id,
         VacationTypeId: vacationType.id,
         UserId: userId,
       });
@@ -229,10 +229,10 @@ async function updateVacation({ id, status }) {
     const [vacation] = await knex
       .db("Vacations")
       .join("VacationTypes", "Vacations.VacationTypeId", "VacationTypes.Id")
-      .join("Users", "Vacations.UserId", "User.Id")
+      .join("Users", "Vacations.UserId", "Users.Id")
       .where({ "Vacations.Id": id })
       .select(
-        "Vacation.*",
+        "Vacations.*",
         "VacationTypes.Name as VacationType_Name",
         "Users.VacationLimit as User_VacationLimit"
       );

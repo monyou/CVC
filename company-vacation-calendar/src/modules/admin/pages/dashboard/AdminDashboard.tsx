@@ -119,15 +119,16 @@ function AdminDashboard() {
   );
 
   const pendingVacations =
-    vacationsForCompany?.filter((v) => v.status === VacationStatus.Pending) ||
-    [];
+    vacationsForCompany?.filter(
+      (v) => v.status.name === VacationStatus.Pending
+    ) || [];
 
   const activeCompanyUsers =
     allCompanyUsers?.filter((u) => u.isActive && u.id !== reduxUser.sub) || [];
 
   const vacationsCalendarEvents =
     vacationsForCompany
-      ?.filter((x) => x.status === VacationStatus.Accepted)
+      ?.filter((x) => x.status.name === VacationStatus.Accepted)
       .map((v) =>
         v.days.map((d) => ({
           start: new Date(+d),
@@ -170,7 +171,7 @@ function AdminDashboard() {
 
     createUserMutation.mutate(user, { onSettled: () => setSubmitting(false) });
   }
-
+  console.log(pendingVacations);
   return (
     <div>
       <TabView
