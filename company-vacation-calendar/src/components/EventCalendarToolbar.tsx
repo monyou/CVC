@@ -23,7 +23,7 @@ function Toolbar(
     >
       <div
         css={{
-          width: "220px",
+          width: "230px",
           display: "flex",
           justifyContent: "space-between",
           ...isSmallDeviceMediaQuery({ width: "120px" }),

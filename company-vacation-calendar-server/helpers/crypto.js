@@ -1,9 +1,5 @@
 const crypto = require("crypto");
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 const algorithm = "aes-256-ctr";
 const secretKey = process.env.CRYPTO_SECRET_KEY;
 const iv = crypto.randomBytes(16);

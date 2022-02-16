@@ -3,10 +3,6 @@ const knex = require("../../helpers/knex-config");
 const { decrypt } = require("../../helpers/crypto");
 const { mailer } = require("../../helpers/mailer");
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 async function authenticate({ email, password }) {
   try {
     const [user] = await knex

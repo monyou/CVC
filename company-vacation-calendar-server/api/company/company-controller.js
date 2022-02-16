@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const companyService = require("./company-service");
 const authorize = require("../../helpers/authorize");
-const roles = require("../../helpers/roles");
+const { roles } = require("../../helpers/enums");
 
 router.get(
   "/company/getAll",

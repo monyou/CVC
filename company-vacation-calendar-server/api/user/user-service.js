@@ -2,11 +2,7 @@ const knex = require("../../helpers/knex-config");
 const { v4: uuidv4 } = require("uuid");
 const { encrypt } = require("../../helpers/crypto");
 const { mailer } = require("../../helpers/mailer");
-const roles = require("../../helpers/roles");
-
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
+const { roles } = require("../../helpers/enums");
 
 async function getUserById({ id }) {
   try {

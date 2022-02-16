@@ -61,7 +61,7 @@ const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
                     lineHeight: "20px",
                     color: "whitesmoke",
                     textShadow: "0 0 3px black",
-                    fontWeight: "bold",
+                    fontWeight: 600,
                     cursor: "default",
                     ...isSmallDeviceMediaQuery({ marginRight: "none" }),
                   }}

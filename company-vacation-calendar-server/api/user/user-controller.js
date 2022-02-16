@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const authorize = require("../../helpers/authorize");
-const roles = require("../../helpers/roles");
+const { roles } = require("../../helpers/enums");
 const userService = require("./user-service");
 
 router.get("/user/getById", authorize(), (req, res, next) => {

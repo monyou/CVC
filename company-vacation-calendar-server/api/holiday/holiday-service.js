@@ -1,9 +1,5 @@
 const axios = require("axios");
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 async function getAllHolidays() {
   try {
     const {

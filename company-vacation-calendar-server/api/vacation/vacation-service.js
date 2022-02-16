@@ -1,5 +1,5 @@
 const knex = require("../../helpers/knex-config");
-const statuses = require("../../helpers/vacation-status");
+const { vacationStatuses } = require("../../helpers/enums");
 
 async function getAllVacations() {
   try {
@@ -199,7 +199,7 @@ async function createVacation({
 
     const [vacationStatus] = await knex
       .db("VacationStatuses")
-      .where({ Name: statuses.Pending });
+      .where({ Name: vacationStatuses.Pending });
 
     if (user && vacationStatus && user.VacationLimit >= days.length) {
       await knex.db("Vacations").insert({
@@ -243,7 +243,7 @@ async function updateVacation({ id, status }) {
       });
 
       if (
-        status === statuses.Accepted &&
+        status === vacationStatuses.Accepted &&
         vacation.VacationType_Name === "Paid"
       ) {
         await knex

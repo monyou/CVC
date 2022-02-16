@@ -1,7 +1,3 @@
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
-}
-
 const db = require("knex")({
   client: process.env.KNEX_CLIENT,
   connection: {
