@@ -3,7 +3,6 @@ import React from "react";
 import { backgroundSoloPage } from "../../../../styles/colors";
 import {
   centerDivOnScreen,
-  inputErrorMsg,
   inputGroupWithError,
   isSmallDeviceMediaQuery,
   PrimeButton,
@@ -12,7 +11,7 @@ import { Card } from "primereact/card";
 import calendarLogo from "../../../../assets/logos/calendar.png";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { InputText } from "primereact/inputtext";
-import { ErrorMessage, Formik } from "formik";
+import { Formik } from "formik";
 import { useHistory } from "react-router";
 import { subscribe } from "../../../../services/auth.service";
 import { useMutation } from "react-query";
@@ -144,6 +143,8 @@ function Subscribe() {
         >
           {({
             values,
+            errors,
+            touched,
             handleChange,
             handleBlur,
             handleSubmit,
@@ -168,17 +169,21 @@ function Subscribe() {
                           id="name"
                           name="name"
                           value={values.name}
+                          className={
+                            touched.name && errors.name ? "p-invalid" : ""
+                          }
+                          aria-describedby="name-help"
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
                         <label htmlFor="name">Company Name</label>
                       </span>
                     </div>
-                    <ErrorMessage
-                      css={inputErrorMsg}
-                      name="name"
-                      component="div"
-                    />
+                    {touched.name && errors.name ? (
+                      <small id="name-help" className="p-error">
+                        {errors.name}
+                      </small>
+                    ) : null}
                   </div>
                   <div css={{ ...inputGroupWithError }}>
                     <div className="p-inputgroup">
@@ -190,17 +195,21 @@ function Subscribe() {
                           id="bulstat"
                           name="bulstat"
                           value={values.bulstat}
+                          className={
+                            touched.bulstat && errors.bulstat ? "p-invalid" : ""
+                          }
+                          aria-describedby="bulstat-help"
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
                         <label htmlFor="bulstat">Company Bulstat</label>
                       </span>
                     </div>
-                    <ErrorMessage
-                      css={inputErrorMsg}
-                      name="bulstat"
-                      component="div"
-                    />
+                    {touched.bulstat && errors.bulstat ? (
+                      <small id="bulstat-help" className="p-error">
+                        {errors.bulstat}
+                      </small>
+                    ) : null}
                   </div>
                   <div css={{ ...inputGroupWithError }}>
                     <div className="p-inputgroup">
@@ -212,6 +221,13 @@ function Subscribe() {
                           id="yearVacationLimit"
                           name="yearVacationLimit"
                           value={values.yearVacationLimit}
+                          className={
+                            touched.yearVacationLimit &&
+                            errors.yearVacationLimit
+                              ? "p-invalid"
+                              : ""
+                          }
+                          aria-describedby="yearVacationLimit-help"
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
@@ -220,11 +236,11 @@ function Subscribe() {
                         </label>
                       </span>
                     </div>
-                    <ErrorMessage
-                      css={inputErrorMsg}
-                      name="yearVacationLimit"
-                      component="div"
-                    />
+                    {touched.yearVacationLimit && errors.yearVacationLimit ? (
+                      <small id="yearVacationLimit-help" className="p-error">
+                        {errors.yearVacationLimit}
+                      </small>
+                    ) : null}
                   </div>
                 </div>
                 <Divider
@@ -242,17 +258,23 @@ function Subscribe() {
                           id="firstName"
                           name="firstName"
                           value={values.firstName}
+                          className={
+                            touched.firstName && errors.firstName
+                              ? "p-invalid"
+                              : ""
+                          }
+                          aria-describedby="firstName-help"
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
                         <label htmlFor="firstName">Manager First Name</label>
                       </span>
                     </div>
-                    <ErrorMessage
-                      css={inputErrorMsg}
-                      name="firstName"
-                      component="div"
-                    />
+                    {touched.firstName && errors.firstName ? (
+                      <small id="firstName-help" className="p-error">
+                        {errors.firstName}
+                      </small>
+                    ) : null}
                   </div>
                   <div css={{ ...inputGroupWithError }}>
                     <div className="p-inputgroup">
@@ -264,17 +286,23 @@ function Subscribe() {
                           id="lastName"
                           name="lastName"
                           value={values.lastName}
+                          className={
+                            touched.lastName && errors.lastName
+                              ? "p-invalid"
+                              : ""
+                          }
+                          aria-describedby="lastName-help"
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
                         <label htmlFor="lastName">Manager Last Name</label>
                       </span>
                     </div>
-                    <ErrorMessage
-                      css={inputErrorMsg}
-                      name="lastName"
-                      component="div"
-                    />
+                    {touched.lastName && errors.lastName ? (
+                      <small id="lastName-help" className="p-error">
+                        {errors.lastName}
+                      </small>
+                    ) : null}
                   </div>
                   <div css={{ ...inputGroupWithError }}>
                     <div className="p-inputgroup">
@@ -287,17 +315,21 @@ function Subscribe() {
                           name="email"
                           type="email"
                           value={values.email}
+                          className={
+                            touched.email && errors.email ? "p-invalid" : ""
+                          }
+                          aria-describedby="email-help"
                           onChange={handleChange}
                           onBlur={handleBlur}
                         />
                         <label htmlFor="email">Manager Email</label>
                       </span>
                     </div>
-                    <ErrorMessage
-                      css={inputErrorMsg}
-                      name="email"
-                      component="div"
-                    />
+                    {touched.email && errors.email ? (
+                      <small id="email-help" className="p-error">
+                        {errors.email}
+                      </small>
+                    ) : null}
                   </div>
                 </div>
               </div>

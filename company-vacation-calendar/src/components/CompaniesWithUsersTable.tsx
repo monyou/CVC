@@ -3,12 +3,14 @@ import React from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
+import { Chip } from "primereact/chip";
 import { PrimeSmallButton } from "../styles/common";
 import { isSmallDevice } from "../styles/common";
 import { confirmDialog } from "primereact/confirmdialog";
 import UserModel from "../dtos/user.dto";
 import CompanyModel from "../dtos/company.dto";
 import { CompaniesWithUsersTableDataModel } from "../modules/superadmin/types/superadmin.type";
+import { primaryColor } from "../styles/colors";
 
 type CompaniesWithUsersTableProps = {
   companies: Array<CompanyModel>;
@@ -79,7 +81,20 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
       <Column sortable field="firstName" header="First Name" />
       <Column sortable field="lastName" header="Last Name" />
       <Column sortable field="email" header="Email" />
-      <Column sortable field="role" header="Role" />
+      <Column
+        sortable
+        field="role"
+        header="Role"
+        body={(data: { role: string }) => (
+          <Chip
+            label={data.role}
+            css={{
+              backgroundColor: data.role === "Admin" ? "#fd7e14" : primaryColor,
+              color: "white",
+            }}
+          />
+        )}
+      />
       <Column sortable field="active" header="Active" />
     </DataTable>
   );

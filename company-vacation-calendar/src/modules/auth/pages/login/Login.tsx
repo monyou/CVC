@@ -5,11 +5,7 @@ import { login } from "../../../../services/auth.service";
 import { backgroundSoloPage } from "../../../../styles/colors";
 import { InputText } from "primereact/inputtext";
 import { Card } from "primereact/card";
-import {
-  centerDivOnScreen,
-  inputErrorMsg,
-  PrimeButton,
-} from "../../../../styles/common";
+import { centerDivOnScreen, PrimeButton } from "../../../../styles/common";
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
 import { loginUser } from "../../../../redux/slices/user.slice";
@@ -109,13 +105,17 @@ function Login() {
                     name="email"
                     type="email"
                     value={values.email}
+                    className={touched.email && errors.email ? "p-invalid" : ""}
+                    aria-describedby="email-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="email">Email</label>
                 </span>
               </div>
               {touched.email && errors.email ? (
-                <div css={inputErrorMsg}>{errors.email}</div>
+                <small id="email-help" className="p-error">
+                  {errors.email}
+                </small>
               ) : null}
               <div className="p-inputgroup" css={{ marginTop: "25px" }}>
                 <span className="p-inputgroup-addon">
@@ -127,13 +127,19 @@ function Login() {
                     name="password"
                     type="password"
                     value={values.password}
+                    className={
+                      touched.password && errors.password ? "p-invalid" : ""
+                    }
+                    aria-describedby="password-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="password">Password</label>
                 </span>
               </div>
               {touched.password && errors.password ? (
-                <div css={inputErrorMsg}>{errors.password}</div>
+                <small id="password-help" className="p-error">
+                  {errors.password}
+                </small>
               ) : null}
               <PrimeButton
                 type="submit"

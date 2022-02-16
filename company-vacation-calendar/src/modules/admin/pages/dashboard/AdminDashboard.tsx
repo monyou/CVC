@@ -19,7 +19,7 @@ import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { Formik } from "formik";
-import { inputErrorMsg, PrimeButton } from "../../../../styles/common";
+import { PrimeButton } from "../../../../styles/common";
 import { Roles } from "../../../../utils/enums";
 import EventCalendar from "../../../../components/EventCalendar";
 import VacationTypesLegend from "../../../../components/VacationTypesLegend";
@@ -280,13 +280,17 @@ function AdminDashboard() {
                     id="email"
                     type="email"
                     value={values.email}
+                    className={touched.email && errors.email ? "p-invalid" : ""}
+                    aria-describedby="email-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="email">Email</label>
                 </span>
               </div>
               {touched.email && errors.email ? (
-                <div css={inputErrorMsg}>{errors.email}</div>
+                <small id="email-help" className="p-error">
+                  {errors.email}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -294,13 +298,19 @@ function AdminDashboard() {
                     id="firstName"
                     type="text"
                     value={values.firstName}
+                    className={
+                      touched.firstName && errors.firstName ? "p-invalid" : ""
+                    }
+                    aria-describedby="firstName-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="firstName">First Name</label>
                 </span>
               </div>
               {touched.firstName && errors.firstName ? (
-                <div css={inputErrorMsg}>{errors.firstName}</div>
+                <small id="firstName-help" className="p-error">
+                  {errors.firstName}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -308,13 +318,19 @@ function AdminDashboard() {
                     id="lastName"
                     type="text"
                     value={values.lastName}
+                    className={
+                      touched.lastName && errors.lastName ? "p-invalid" : ""
+                    }
+                    aria-describedby="lastName-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="lastName">Last Name</label>
                 </span>
               </div>
               {touched.lastName && errors.lastName ? (
-                <div css={inputErrorMsg}>{errors.lastName}</div>
+                <small id="lastName-help" className="p-error">
+                  {errors.lastName}
+                </small>
               ) : null}
               <PrimeButton
                 type="submit"

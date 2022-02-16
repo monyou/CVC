@@ -10,7 +10,6 @@ import { Formik } from "formik";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
 import {
-  inputErrorMsg,
   isSmallDeviceMediaQuery,
   PrimeButton,
 } from "../../../../styles/common";
@@ -235,10 +234,20 @@ function UserDashboard() {
                   value: t,
                 }))}
                 onChange={handleChange}
+                className={
+                  touched.vacationType && errors.vacationType ? "p-invalid" : ""
+                }
+                aria-describedby="vacationType-help"
                 placeholder="Type"
               />
               {touched.vacationType && errors.vacationType ? (
-                <div css={inputErrorMsg}>{errors.vacationType}</div>
+                <small
+                  id="vacationType-help"
+                  className="p-error"
+                  css={{ display: "block" }}
+                >
+                  {errors.vacationType}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -249,13 +258,25 @@ function UserDashboard() {
                     cols={30}
                     value={values.description}
                     onChange={handleChange}
+                    className={
+                      touched.description && errors.description
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="description-help"
                     autoResize
                   />
                   <label htmlFor="description">Reasons</label>
                 </span>
               </div>
               {touched.description && errors.description ? (
-                <div css={inputErrorMsg}>{errors.description}</div>
+                <small
+                  id="description-help"
+                  className="p-error"
+                  css={{ display: "block" }}
+                >
+                  {errors.description}
+                </small>
               ) : null}
               <Calendar
                 css={{
@@ -276,7 +297,13 @@ function UserDashboard() {
                 numberOfMonths={1}
               />
               {touched.dates && errors.dates ? (
-                <div css={inputErrorMsg}>{errors.dates}</div>
+                <small
+                  id="dates-help"
+                  className="p-error"
+                  css={{ display: "block", textAlign: "center" }}
+                >
+                  {errors.dates}
+                </small>
               ) : null}
               <PrimeButton
                 type="submit"

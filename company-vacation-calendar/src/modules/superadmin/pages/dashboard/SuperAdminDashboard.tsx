@@ -14,7 +14,7 @@ import {
   getAllCompanies,
 } from "../../../../services/company.service";
 import { createUser, getAllUsers } from "../../../../services/user.service";
-import { inputErrorMsg, PrimeButton } from "../../../../styles/common";
+import { PrimeButton } from "../../../../styles/common";
 import { Roles } from "../../../../utils/enums";
 import {
   CreateCompanyWithAdminFormikErrors,
@@ -191,13 +191,21 @@ function SuperAdminDashboard() {
                     id="companyName"
                     type="text"
                     value={values.companyName}
+                    className={
+                      touched.companyName && errors.companyName
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="companyName-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="companyName">Company Name</label>
                 </span>
               </div>
               {touched.companyName && errors.companyName ? (
-                <div css={inputErrorMsg}>{errors.companyName}</div>
+                <small id="companyName-help" className="p-error">
+                  {errors.companyName}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -205,13 +213,21 @@ function SuperAdminDashboard() {
                     id="companyBulstat"
                     type="text"
                     value={values.companyBulstat}
+                    className={
+                      touched.companyBulstat && errors.companyBulstat
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="companyBulstat-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="companyBulstat">Company Bulstat</label>
                 </span>
               </div>
               {touched.companyBulstat && errors.companyBulstat ? (
-                <div css={inputErrorMsg}>{errors.companyBulstat}</div>
+                <small id="companyBulstat-help" className="p-error">
+                  {errors.companyBulstat}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -219,6 +235,13 @@ function SuperAdminDashboard() {
                     id="companyYearVacationLimit"
                     type="text"
                     value={values.companyYearVacationLimit}
+                    className={
+                      touched.companyYearVacationLimit &&
+                      errors.companyYearVacationLimit
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="companyYearVacationLimit-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="companyYearVacationLimit">
@@ -228,7 +251,9 @@ function SuperAdminDashboard() {
               </div>
               {touched.companyYearVacationLimit &&
               errors.companyYearVacationLimit ? (
-                <div css={inputErrorMsg}>{errors.companyYearVacationLimit}</div>
+                <small id="companyYearVacationLimit-help" className="p-error">
+                  {errors.companyYearVacationLimit}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -236,13 +261,21 @@ function SuperAdminDashboard() {
                     id="managerFirstName"
                     type="text"
                     value={values.managerFirstName}
+                    className={
+                      touched.managerFirstName && errors.managerFirstName
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="managerFirstName-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="managerFirstName">Manager First Name</label>
                 </span>
               </div>
               {touched.managerFirstName && errors.managerFirstName ? (
-                <div css={inputErrorMsg}>{errors.managerFirstName}</div>
+                <small id="managerFirstName-help" className="p-error">
+                  {errors.managerFirstName}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -250,13 +283,21 @@ function SuperAdminDashboard() {
                     id="managerLastName"
                     type="text"
                     value={values.managerLastName}
+                    className={
+                      touched.managerLastName && errors.managerLastName
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="managerLastName-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="managerLastName">Manager Last Name</label>
                 </span>
               </div>
               {touched.managerLastName && errors.managerLastName ? (
-                <div css={inputErrorMsg}>{errors.managerLastName}</div>
+                <small id="managerLastName-help" className="p-error">
+                  {errors.managerLastName}
+                </small>
               ) : null}
               <div css={{ marginTop: "30px" }} className="p-inputgroup">
                 <span className="p-float-label">
@@ -264,13 +305,21 @@ function SuperAdminDashboard() {
                     id="managerEmail"
                     type="email"
                     value={values.managerEmail}
+                    className={
+                      touched.managerEmail && errors.managerEmail
+                        ? "p-invalid"
+                        : ""
+                    }
+                    aria-describedby="managerEmail-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="managerEmail">Manager Email</label>
                 </span>
               </div>
               {touched.managerEmail && errors.managerEmail ? (
-                <div css={inputErrorMsg}>{errors.managerEmail}</div>
+                <small id="managerEmail-help" className="p-error">
+                  {errors.managerEmail}
+                </small>
               ) : null}
               <PrimeButton
                 type="submit"

@@ -8,7 +8,6 @@ import { InputText } from "primereact/inputtext";
 import { Formik } from "formik";
 import { backgroundSoloPage } from "../../../../styles/colors";
 import {
-  inputErrorMsg,
   centerDivOnScreen,
   isSmallDeviceMediaQuery,
   PrimeButton,
@@ -106,13 +105,19 @@ function ActivateUser() {
                     id="password"
                     type="password"
                     value={values.password}
+                    className={
+                      touched.password && errors.password ? "p-invalid" : ""
+                    }
+                    aria-describedby="password-help"
                     onChange={handleChange}
                   />
                   <label htmlFor="password">Your password</label>
                 </span>
               </div>
               {touched.password && errors.password ? (
-                <div css={inputErrorMsg}>{errors.password}</div>
+                <small id="password-help" className="p-error">
+                  {errors.password}
+                </small>
               ) : null}
               <PrimeButton
                 type="submit"
