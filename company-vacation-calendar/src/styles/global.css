@@ -1,4 +1,4 @@
-@import "primereact/resources/themes/saga-blue/theme.css";
+@import "primereact/resources/themes/lara-light-blue/theme.css";
 @import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
 @import "primeflex/primeflex.css";
@@ -22,4 +22,8 @@ body {
   height: 100%;
   margin: 0;
   padding: 0;
+}
+
+[role="tab"].p-tabview-nav-link:focus {
+  box-shadow: none !important;
 }

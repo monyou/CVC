@@ -2,9 +2,7 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
 import { login } from "../../../../services/auth.service";
-import { backgroundSoloPage } from "../../../../styles/colors";
 import { InputText } from "primereact/inputtext";
-import { Card } from "primereact/card";
 import { centerDivOnScreen, PrimeButton } from "../../../../styles/common";
 import { Formik } from "formik";
 import { useDispatch } from "react-redux";
@@ -43,125 +41,121 @@ function Login() {
   }
 
   return (
-    <div css={{ backgroundColor: backgroundSoloPage, height: "100vh" }}>
-      <Card
+    <div
+      css={{
+        position: "absolute",
+        width: "clamp(300px, 95%, 500px)",
+        ...centerDivOnScreen,
+      }}
+    >
+      <img
+        src={calendarLogo}
         css={{
-          position: "absolute",
-          width: "clamp(300px, 95%, 500px)",
-          ...centerDivOnScreen,
+          display: "block",
+          width: "100px",
+          height: "100px",
+          margin: "0 auto",
+          cursor: "pointer",
         }}
+        alt="logo"
+        onClick={() => routeHistory.push("/")}
+      />
+      <h3 css={{ textAlign: "center", marginTop: 50 }}>Welcome</h3>
+      <Formik
+        initialValues={{ email: "", password: "" }}
+        validate={(values) => {
+          const errors: LoginFormikErrors = {};
+          if (!values.email) {
+            errors.email = "Email required";
+          } else if (
+            !/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/g.test(values.email)
+          ) {
+            errors.email = "Invalid email";
+          }
+
+          if (!values.password) {
+            errors.password = "Password required";
+          }
+
+          return errors;
+        }}
+        onSubmit={handleFormSubmit}
       >
-        <img
-          src={calendarLogo}
-          css={{
-            display: "block",
-            width: "100px",
-            height: "100px",
-            margin: "0 auto",
-            boxShadow: "0 0 50px grey",
-            borderRadius: "10px",
-            cursor: "pointer",
-          }}
-          alt="logo"
-          onClick={() => routeHistory.push("/")}
-        />
-        <h3 css={{ textAlign: "center" }}>Welcome back</h3>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validate={(values) => {
-            const errors: LoginFormikErrors = {};
-            if (!values.email) {
-              errors.email = "Email required";
-            } else if (
-              !/[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/g.test(values.email)
-            ) {
-              errors.email = "Invalid email";
-            }
-
-            if (!values.password) {
-              errors.password = "Password required";
-            }
-
-            return errors;
-          }}
-          onSubmit={handleFormSubmit}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleChange,
-            handleSubmit,
-            isSubmitting,
-          }) => (
-            <form autoComplete="true" onSubmit={handleSubmit}>
-              <div css={{ marginTop: "30px" }} className="p-inputgroup">
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-envelope"></i>
-                </span>
-                <span className="p-float-label">
-                  <InputText
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={values.email}
-                    className={touched.email && errors.email ? "p-invalid" : ""}
-                    aria-describedby="email-help"
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="email">Email</label>
-                </span>
-              </div>
-              {touched.email && errors.email ? (
-                <small id="email-help" className="p-error">
-                  {errors.email}
-                </small>
-              ) : null}
-              <div className="p-inputgroup" css={{ marginTop: "25px" }}>
-                <span className="p-inputgroup-addon">
-                  <i className="pi pi-key"></i>
-                </span>
-                <span className="p-float-label">
-                  <InputText
-                    id="password"
-                    name="password"
-                    type="password"
-                    value={values.password}
-                    className={
-                      touched.password && errors.password ? "p-invalid" : ""
-                    }
-                    aria-describedby="password-help"
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="password">Password</label>
-                </span>
-              </div>
-              {touched.password && errors.password ? (
-                <small id="password-help" className="p-error">
-                  {errors.password}
-                </small>
-              ) : null}
-              <PrimeButton
-                type="submit"
-                className="p-button-primary p-button-rounded"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  <ProgressSpinner
-                    strokeWidth="5"
-                    style={{
-                      width: "15px",
-                      height: "15px",
-                    }}
-                  />
-                ) : (
-                  "Login"
-                )}
-              </PrimeButton>
-            </form>
-          )}
-        </Formik>
-      </Card>
+        {({
+          values,
+          errors,
+          touched,
+          handleChange,
+          handleSubmit,
+          isSubmitting,
+        }) => (
+          <form autoComplete="true" onSubmit={handleSubmit}>
+            <div css={{ marginTop: "30px" }} className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-envelope"></i>
+              </span>
+              <span className="p-float-label">
+                <InputText
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={values.email}
+                  className={touched.email && errors.email ? "p-invalid" : ""}
+                  aria-describedby="email-help"
+                  onChange={handleChange}
+                />
+                <label htmlFor="email">Email</label>
+              </span>
+            </div>
+            {touched.email && errors.email ? (
+              <small id="email-help" className="p-error">
+                {errors.email}
+              </small>
+            ) : null}
+            <div className="p-inputgroup" css={{ marginTop: "25px" }}>
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-key"></i>
+              </span>
+              <span className="p-float-label">
+                <InputText
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={values.password}
+                  className={
+                    touched.password && errors.password ? "p-invalid" : ""
+                  }
+                  aria-describedby="password-help"
+                  onChange={handleChange}
+                />
+                <label htmlFor="password">Password</label>
+              </span>
+            </div>
+            {touched.password && errors.password ? (
+              <small id="password-help" className="p-error">
+                {errors.password}
+              </small>
+            ) : null}
+            <PrimeButton
+              type="submit"
+              className="p-button-primary p-button-rounded"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <ProgressSpinner
+                  strokeWidth="5"
+                  style={{
+                    width: "15px",
+                    height: "15px",
+                  }}
+                />
+              ) : (
+                "Login"
+              )}
+            </PrimeButton>
+          </form>
+        )}
+      </Formik>
     </div>
   );
 }

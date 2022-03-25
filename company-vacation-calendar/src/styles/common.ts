@@ -11,6 +11,11 @@ export const inputGroupWithError = {
   margin: "25px 0px",
 };
 
+export const smallIconButton = {
+  height: "35px !important",
+  width: "35px !important",
+};
+
 export const isSmallDevice = window.innerWidth < 768;
 
 export const isSmallDeviceMediaQuery = (props: any) => {
@@ -35,6 +40,7 @@ export const PrimeButton = styled(Button)({
 const common = {
   centerDivOnScreen,
   inputGroupWithError,
+  smallIconButton,
   isSmallDevice,
   isSmallDeviceMediaQuery,
   PrimeSmallButton,

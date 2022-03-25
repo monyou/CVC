@@ -1,6 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
-import { isSmallDevice, PrimeSmallButton } from "../styles/common";
+import { PrimeSmallButton } from "../styles/common";
 import { Card } from "primereact/card";
 import moment from "moment";
 import VacationModel from "../dtos/vacation.dto";
@@ -17,15 +17,15 @@ const VacationRequestsList: React.FC<VacationRequestsListProps> = ({
   const noRequests = pendingVacations.length === 0;
 
   return (
-    <div className="p-grid">
+    <div className="grid">
       {noRequests ? (
         <div css={{ textAlign: "center", width: "100%", marginTop: "50px" }}>
-          There is no vacation requests yet.
+          There are no vacation requests yet.
         </div>
       ) : (
         pendingVacations.map((v) => {
           return (
-            <div key={v.id} className="p-col-12 p-sm-6 p-lg-4 p-xl-3">
+            <div key={v.id} className="col-12 sm:col-6 lg:col-4 xl:col-3">
               <Card
                 title={v.username}
                 subTitle={`${v.vacationType.name} (${v.days.length} ${
@@ -34,16 +34,16 @@ const VacationRequestsList: React.FC<VacationRequestsListProps> = ({
                 footer={
                   <div css={{ textAlign: "center" }}>
                     <PrimeSmallButton
-                      label={isSmallDevice ? "" : "Accept"}
-                      className="p-button-success"
+                      label="Accept"
+                      className="p-button-success p-button-rounded"
                       icon="pi pi-check"
                       style={{ marginRight: ".5em" }}
                       onClick={() => handleUpdateVacation("accept", v.id)}
                     />
                     <PrimeSmallButton
-                      label={isSmallDevice ? "" : "Reject"}
+                      label="Reject"
                       icon="pi pi-times"
-                      className="p-button-danger"
+                      className="p-button-danger p-button-rounded p-button-outlined"
                       onClick={() => handleUpdateVacation("reject", v.id)}
                     />
                   </div>

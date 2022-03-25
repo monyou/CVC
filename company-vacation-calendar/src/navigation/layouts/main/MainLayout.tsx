@@ -1,7 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { PrimeSmallButton, isSmallDevice } from "../../../styles/common";
+import {
+  PrimeSmallButton,
+  isSmallDevice,
+  smallIconButton,
+} from "../../../styles/common";
 import { getUserFromToken } from "../../../services/auth.service";
 import { useHistory } from "react-router-dom";
 import { useQueryClient } from "react-query";
@@ -45,8 +49,9 @@ const MainLayout: React.FC = ({ children }) => {
             Hi, {reduxUser?.firstName || getUserFromToken()?.firstName}
           </div>
           <PrimeSmallButton
+            css={{ ...smallIconButton }}
             icon="pi pi-sign-out"
-            className="p-button-raised"
+            className="p-button-rounded"
             onClick={() => {
               dispatch(logoutUser());
               queryClient.clear();

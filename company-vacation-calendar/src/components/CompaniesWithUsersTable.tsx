@@ -4,7 +4,11 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { Chip } from "primereact/chip";
-import { PrimeSmallButton } from "../styles/common";
+import {
+  isSmallDeviceMediaQuery,
+  PrimeSmallButton,
+  smallIconButton,
+} from "../styles/common";
 import { isSmallDevice } from "../styles/common";
 import { confirmDialog } from "primereact/confirmdialog";
 import UserModel from "../dtos/user.dto";
@@ -67,9 +71,10 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
       </div>
       <div css={{ marginLeft: "auto" }}>
         <PrimeSmallButton
+          css={{ ...isSmallDeviceMediaQuery({ ...smallIconButton }) }}
           label={isSmallDevice ? "" : "Add New"}
           icon="pi pi-user-plus"
-          className="p-button-success"
+          className="p-button-success p-button-rounded"
           onClick={() => addCompany()}
         />
       </div>
@@ -77,9 +82,19 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
   );
 
   const tableMoreInfoTemplate = (data: CompaniesWithUsersTableDataModel) => (
-    <DataTable autoLayout value={data.users}>
-      <Column sortable field="firstName" header="First Name" />
-      <Column sortable field="lastName" header="Last Name" />
+    <DataTable autoLayout value={data.users} style={{ width: "100%" }}>
+      <Column
+        style={{ whiteSpace: "nowrap" }}
+        sortable
+        field="firstName"
+        header="First Name"
+      />
+      <Column
+        style={{ whiteSpace: "nowrap" }}
+        sortable
+        field="lastName"
+        header="Last Name"
+      />
       <Column sortable field="email" header="Email" />
       <Column
         sortable
@@ -102,17 +117,20 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
   const tableActionsColBodyTemplate = (data: CompanyModel) => (
     <div>
       <PrimeSmallButton
+        css={{ ...isSmallDeviceMediaQuery({ ...smallIconButton }) }}
         label={isSmallDevice ? "" : "Remove"}
         icon="pi pi-user-minus"
-        className="p-button-danger"
+        className="p-button-danger p-button-rounded p-button-outlined"
         onClick={() =>
           confirmDialog({
             message: `Do you want to remove ${data.name}?`,
             header: "Remove Company",
             icon: "pi pi-exclamation-triangle",
-            acceptClassName: "p-button-success",
-            rejectClassName: "p-button-danger",
+            acceptClassName:
+              "p-button-success p-button-outlined p-button-rounded p-button-sm",
+            rejectClassName: "p-button-danger p-button-rounded p-button-sm",
             accept: () => removeCompany(data.id),
+            draggable: false,
           })
         }
       />
@@ -136,7 +154,12 @@ const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
         header={tableHeader}
       >
         <Column expander />
-        <Column sortable field="name" header="Company Name" />
+        <Column
+          style={{ whiteSpace: "nowrap" }}
+          sortable
+          field="name"
+          header="Company Name"
+        />
         <Column sortable field="bulstat" header="Bulstat" />
         <Column
           field="actions"

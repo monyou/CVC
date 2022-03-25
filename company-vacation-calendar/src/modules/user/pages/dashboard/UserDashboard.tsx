@@ -20,7 +20,7 @@ import { useSelector } from "react-redux";
 import VacationTypesLegend from "../../../../components/VacationTypesLegend";
 import { useQuery } from "react-query";
 import { locale } from "primereact/api";
-import colors, { vacationTypesColors } from "../../../../styles/colors";
+import { vacationTypesColors } from "../../../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useMutation } from "react-query";
 import { VacationStatus } from "../../../../utils/enums";
@@ -35,7 +35,6 @@ import {
   UserSubmitVacationFormikProps,
   UserSubmitVacationProps,
 } from "../../types/user.type";
-import { Chip } from "primereact/chip";
 
 function UserDashboard() {
   locale("bg");
@@ -139,12 +138,8 @@ function UserDashboard() {
 
   return (
     <div>
-      <div css={{ marginBottom: 10 }}>
-        <Chip
-          css={{ backgroundColor: colors.primaryColor, color: "white" }}
-          label={reduxUser.vacationLimit}
-          icon="pi pi-calendar"
-        />
+      <div css={{ marginBottom: 30, textAlign: "center" }}>
+        Available days: <strong>{reduxUser.vacationLimit}</strong>
       </div>
       <div css={{ marginBottom: 30 }}>
         <VacationTypesLegend vacationTypes={vacationTypes} />
@@ -187,10 +182,11 @@ function UserDashboard() {
         header="Apply for vacation"
         visible={showApplyForVacationDialog}
         css={{ width: "50%", ...isSmallDeviceMediaQuery({ width: "95%" }) }}
-        contentStyle={{ padding: "10px 25px 40px 25px" }}
+        contentStyle={{ padding: "0px 25px 30px 25px" }}
         onHide={() => {
           setShowApplyForVacationDialog(false);
         }}
+        draggable={false}
       >
         <Formik
           initialValues={{ vacationType: "", description: "", dates: [] }}

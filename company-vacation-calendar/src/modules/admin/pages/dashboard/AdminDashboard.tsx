@@ -171,9 +171,12 @@ function AdminDashboard() {
 
     createUserMutation.mutate(user, { onSettled: () => setSubmitting(false) });
   }
-  console.log(pendingVacations);
+
   return (
     <div>
+      <div css={{ marginBottom: 10, textAlign: "center" }}>
+        Available days: <strong>{reduxUser.vacationLimit}</strong>
+      </div>
       <TabView
         renderActiveOnly={false}
         css={{ ".p-tabview-nav": { justifyContent: "center" } }}
@@ -194,7 +197,7 @@ function AdminDashboard() {
           </div>
 
           <EventCalendar
-            styles={{ height: "calc(100vh - 225px)" }}
+            styles={{ height: "calc(100vh - 260px)" }}
             eventsList={vacationsCalendarEvents}
             eventStyling={(e: any) => ({
               style: {
@@ -237,8 +240,9 @@ function AdminDashboard() {
         header="Add employee"
         visible={openAddUserDialog}
         css={{ width: "clamp(300px, 95%, 500px)" }}
-        contentStyle={{ padding: "10px 25px 40px 25px" }}
+        contentStyle={{ padding: "0px 25px 30px 25px" }}
         onHide={() => setOpenAddUserDialog(false)}
+        draggable={false}
       >
         <Formik
           initialValues={{ email: "", firstName: "", lastName: "" }}
@@ -274,7 +278,7 @@ function AdminDashboard() {
             isSubmitting,
           }) => (
             <form noValidate onSubmit={handleSubmit}>
-              <div css={{ marginTop: "30px" }} className="p-inputgroup">
+              <div className="p-inputgroup">
                 <span className="p-float-label">
                   <InputText
                     id="email"

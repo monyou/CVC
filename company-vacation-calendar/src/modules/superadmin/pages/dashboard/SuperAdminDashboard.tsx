@@ -119,8 +119,9 @@ function SuperAdminDashboard() {
         header="Add company"
         visible={openAddCompanyDialog}
         css={{ width: "clamp(300px, 95%, 500px)" }}
-        contentStyle={{ padding: "10px 25px 40px 25px" }}
+        contentStyle={{ padding: "0px 25px 30px 25px" }}
         onHide={() => setOpenAddCompanyDialog(false)}
+        draggable={false}
       >
         <Formik
           initialValues={{
@@ -185,7 +186,7 @@ function SuperAdminDashboard() {
             isSubmitting,
           }) => (
             <form noValidate onSubmit={handleSubmit}>
-              <div css={{ marginTop: "30px" }} className="p-inputgroup">
+              <div className="p-inputgroup">
                 <span className="p-float-label">
                   <InputText
                     id="companyName"

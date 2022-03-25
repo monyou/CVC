@@ -5,6 +5,7 @@ import {
   isSmallDevice,
   isSmallDeviceMediaQuery,
   PrimeSmallButton,
+  smallIconButton,
 } from "../styles/common";
 
 function Toolbar(
@@ -23,13 +24,15 @@ function Toolbar(
     >
       <div
         css={{
-          width: "230px",
+          width: "260px",
           display: "flex",
           justifyContent: "space-between",
           ...isSmallDeviceMediaQuery({ width: "120px" }),
         }}
       >
         <PrimeSmallButton
+          css={{ ...isSmallDeviceMediaQuery({ ...smallIconButton }) }}
+          className="p-button-rounded"
           label={isSmallDevice ? "" : "Prev"}
           icon={isSmallDevice ? "pi pi-angle-left" : ""}
           onClick={() =>
@@ -44,11 +47,15 @@ function Toolbar(
           }
         />
         <PrimeSmallButton
+          css={{ ...isSmallDeviceMediaQuery({ ...smallIconButton }) }}
+          className="p-button-rounded"
           label={isSmallDevice ? "" : "Today"}
           icon={isSmallDevice ? "pi pi-angle-down" : ""}
           onClick={() => calendarEvent.onNavigate("today", moment().toDate())}
         />
         <PrimeSmallButton
+          css={{ ...isSmallDeviceMediaQuery({ ...smallIconButton }) }}
+          className="p-button-rounded"
           label={isSmallDevice ? "" : "Next"}
           icon={isSmallDevice ? "pi pi-angle-right" : ""}
           onClick={() =>
@@ -66,8 +73,10 @@ function Toolbar(
       <div>{calendarEvent.label}</div>
       {newEventOption ? (
         <PrimeSmallButton
+          css={{ ...isSmallDeviceMediaQuery({ ...smallIconButton }) }}
+          className="p-button-rounded"
           label={isSmallDevice ? "" : "New Vacation"}
-          icon={isSmallDevice ? "pi pi-calendar" : ""}
+          icon="pi pi-calendar"
           onClick={onNewEventHandler}
         />
       ) : null}
