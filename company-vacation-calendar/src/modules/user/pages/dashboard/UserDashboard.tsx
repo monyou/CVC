@@ -1,11 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { useState, useRef } from "react";
 import EventCalendar from "../../../../components/EventCalendar";
 import { Dialog } from "primereact/dialog";
-import {
-  getAllVacationsByCompany,
-  getAllVacationTypes,
-} from "../../../../services/vacation.service";
 import { Formik } from "formik";
 import { Dropdown } from "primereact/dropdown";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -14,20 +10,14 @@ import {
   PrimeButton,
 } from "../../../../styles/common";
 import { Calendar } from "primereact/calendar";
-import { createVacation } from "../../../../services/vacation.service";
-import { getAllHolidays } from "../../../../services/holiday.service";
 import { useSelector } from "react-redux";
 import VacationTypesLegend from "../../../../components/VacationTypesLegend";
-import { useQuery } from "react-query";
 import { locale } from "primereact/api";
 import { vacationTypesColors } from "../../../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { useMutation } from "react-query";
 import { VacationStatus } from "../../../../utils/enums";
 import moment from "moment";
 import { selectUser } from "../../../../redux/slices/user.slice";
-import VacationModel from "../../../../dtos/vacation.dto";
-import VacationTypeModel from "../../../../dtos/vacationType.dto";
 import { toast } from "react-toastify";
 import {
   UserEventInfoProps,
@@ -35,58 +25,32 @@ import {
   UserSubmitVacationFormikProps,
   UserSubmitVacationProps,
 } from "../../types/user.type";
+import {
+  useCreateVacationMutation,
+  useGetAllHolidaysQuery,
+  useGetAllVacationsByCompanyQuery,
+  useGetAllVacationTypesQuery,
+} from "../../../../redux/baseApi";
 
 function UserDashboard() {
   locale("bg");
 
   const reduxUser = useSelector(selectUser);
   const [showApplyForVacationDialog, setShowApplyForVacationDialog] =
-    React.useState<boolean>(false);
-  const [eventInfo, setEventInfo] = React.useState<UserEventInfoProps>({
+    useState<boolean>(false);
+  const [eventInfo, setEventInfo] = useState<UserEventInfoProps>({
     message: "",
     title: "",
   });
-  const eventInfoPanel = React.useRef<any>(null);
+  const eventInfoPanel = useRef<any>(null);
 
-  const { data: vacationTypes } = useQuery<Array<VacationTypeModel>>(
-    "vacation-types",
-    () => getAllVacationTypes().then((data) => data.vacationTypes),
-    {
-      initialData: [],
-    }
+  const { data: vacationTypes } = useGetAllVacationTypesQuery();
+  const { data: holidays } = useGetAllHolidaysQuery();
+  const { data: vacationsForCompany } = useGetAllVacationsByCompanyQuery(
+    reduxUser?.company?.id,
+    { skip: !reduxUser?.company?.id }
   );
-  const { data: holidays } = useQuery<Array<number>>(
-    "holidays",
-    () => getAllHolidays().then((data) => data.holidays),
-    {
-      initialData: [],
-    }
-  );
-  const { data: vacationsForCompany } = useQuery<Array<VacationModel>>(
-    "vacations-per-company",
-    () => getAllVacationsByCompany(reduxUser.company.id).then((data) => data),
-    {
-      initialData: [],
-      enabled: !!reduxUser.company.id,
-    }
-  );
-
-  const createVacationMutation = useMutation(
-    (requestData: UserSubmitVacationProps) => createVacation(requestData),
-    {
-      onSuccess: () => {
-        setShowApplyForVacationDialog(false);
-        toast("Vacation request was sent to managers for approval", {
-          type: toast.TYPE.SUCCESS,
-        });
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
+  const [createVacation] = useCreateVacationMutation();
 
   const vacationsCalendarEvents =
     vacationsForCompany
@@ -129,11 +93,21 @@ function UserDashboard() {
       vacationType: values.vacationType,
       days: values.dates.map((d: Date) => d.getTime()),
     };
-    createVacationMutation.mutate(requestModel, {
-      onSettled: () => {
+    createVacation(requestModel)
+      .then(() => {
+        setShowApplyForVacationDialog(false);
+        toast("Vacation request was sent to managers for approval", {
+          type: toast.TYPE.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      })
+      .finally(() => {
         setSubmitting(false);
-      },
-    });
+      });
   }
 
   return (

@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { FC } from "react";
 import "moment/locale/bg";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import { Toolbar } from "./EventCalendarToolbar";
@@ -16,7 +16,7 @@ type EventCalendarProps = {
   onEventClicked?: any;
 };
 
-const EventCalendar: React.FC<EventCalendarProps> = ({
+const EventCalendar: FC<EventCalendarProps> = ({
   eventsList = [],
   styles = {},
   startDateAccessorField = "start",

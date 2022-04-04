@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { FC } from "react";
 import { PrimeSmallButton } from "../styles/common";
 import { Card } from "primereact/card";
 import moment from "moment";
@@ -10,7 +10,7 @@ type VacationRequestsListProps = {
   handleUpdateVacation: any;
 };
 
-const VacationRequestsList: React.FC<VacationRequestsListProps> = ({
+const VacationRequestsList: FC<VacationRequestsListProps> = ({
   pendingVacations,
   handleUpdateVacation,
 }) => {
@@ -52,7 +52,7 @@ const VacationRequestsList: React.FC<VacationRequestsListProps> = ({
                 {v.description}
                 <div css={{ height: "70px", overflowY: "scroll" }}>
                   <ul>
-                    {v.days.sort().map((d) => {
+                    {[...v.days].sort().map((d) => {
                       return (
                         <li key={d}>{`${new Date(d).toLocaleDateString(
                           "bg"

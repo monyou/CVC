@@ -1,8 +1,8 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { FC } from "react";
 import { ToastContainer } from "react-toastify";
 
-const CustomLayout: React.FC = ({ children }) => {
+const CustomLayout: FC = ({ children }) => {
   return (
     <>
       {children}

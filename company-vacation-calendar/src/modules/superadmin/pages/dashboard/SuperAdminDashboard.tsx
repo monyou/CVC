@@ -1,19 +1,10 @@
 /** @jsxImportSource @emotion/react */
+import { useState } from "react";
 import { Formik } from "formik";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { ProgressSpinner } from "primereact/progressspinner";
-import React from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
 import CompaniesWithUsersTable from "../../../../components/CompaniesWithUsersTable";
-import CompanyModel from "../../../../dtos/company.dto";
-import UserModel from "../../../../dtos/user.dto";
-import {
-  createCompany,
-  deleteCompany,
-  getAllCompanies,
-} from "../../../../services/company.service";
-import { createUser, getAllUsers } from "../../../../services/user.service";
 import { PrimeButton } from "../../../../styles/common";
 import { Roles } from "../../../../utils/enums";
 import {
@@ -22,63 +13,23 @@ import {
   CreateCompanyWithAdminProps,
 } from "../../types/superadmin.type";
 import { toast } from "react-toastify";
+import {
+  useCreateCompanyMutation,
+  useCreateUserMutation,
+  useDeleteCompanyMutation,
+  useGetAllCompaniesQuery,
+  useGetAllUsersQuery,
+} from "../../../../redux/baseApi";
 
 function SuperAdminDashboard() {
-  const queryClient = useQueryClient();
   const [openAddCompanyDialog, setOpenAddCompanyDialog] =
-    React.useState<boolean>(false);
-
-  const { data: allUsers } = useQuery<Array<UserModel>>(
-    "all-users",
-    () => getAllUsers().then((response) => response.users),
-    {
-      initialData: [],
-    }
-  );
-  const { data: allCompanies } = useQuery<Array<CompanyModel>>(
-    "all-companies",
-    () => getAllCompanies().then((response) => response.companies),
-    {
-      initialData: [],
-    }
-  );
-
-  const deleteCompanyMutation = useMutation(
-    (companyId: string) => deleteCompany(companyId),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("all-users");
-        queryClient.invalidateQueries("all-companies");
-        toast("Successfully removed the company", {
-          type: toast.TYPE.SUCCESS,
-        });
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
-  const createCompanyWithAdminMutation = useMutation(
-    ({ company, user }: CreateCompanyWithAdminProps) =>
-      Promise.all([createCompany(company), createUser(user)]),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("all-users");
-        queryClient.invalidateQueries("all-companies");
-        setOpenAddCompanyDialog(false);
-        toast("Successfully created the company", {
-          type: toast.TYPE.SUCCESS,
-        });
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
+    useState<boolean>(false);
+  const { data: allUsers, refetch: refetchAllUsers } = useGetAllUsersQuery();
+  const { data: allCompanies, refetch: refetchAllCompanies } =
+    useGetAllCompaniesQuery();
+  const [deleteCompany] = useDeleteCompanyMutation();
+  const [createCompany] = useCreateCompanyMutation();
+  const [createUser] = useCreateUserMutation();
 
   function handleCreateCompany(
     values: CreateCompanyWithAdminFormikProps,
@@ -99,9 +50,39 @@ function SuperAdminDashboard() {
       },
     };
 
-    createCompanyWithAdminMutation.mutate(body, {
-      onSettled: () => setSubmitting(false),
-    });
+    Promise.all([createCompany(body.company), createUser(body.user)])
+      .then(() => {
+        refetchAllUsers();
+        refetchAllCompanies();
+        setOpenAddCompanyDialog(false);
+        toast("Successfully created the company", {
+          type: toast.TYPE.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  }
+
+  function handleRemoveCompany(companyId: string): void {
+    deleteCompany(companyId)
+      .then(() => {
+        refetchAllUsers();
+        refetchAllCompanies();
+        toast("Successfully removed the company", {
+          type: toast.TYPE.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      });
   }
 
   return (
@@ -110,7 +91,7 @@ function SuperAdminDashboard() {
         companies={allCompanies || []}
         users={allUsers || []}
         addCompany={() => setOpenAddCompanyDialog(true)}
-        removeCompany={deleteCompanyMutation.mutate}
+        removeCompany={handleRemoveCompany}
       />
 
       {/* Dialogs */}

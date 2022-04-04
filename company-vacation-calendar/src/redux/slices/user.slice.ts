@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { logout } from "../../services/auth.service";
+import { logout } from "../../utils/common";
 
 const initialState = {
   data: {},
@@ -14,7 +14,6 @@ const userSlice = createSlice({
     },
     logoutUser(state) {
       logout();
-      state.data = {};
     },
   },
 });

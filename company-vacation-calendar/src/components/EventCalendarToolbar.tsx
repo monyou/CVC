@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import moment from "moment";
 import {
   isSmallDevice,

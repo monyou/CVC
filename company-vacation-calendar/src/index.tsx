@@ -1,4 +1,3 @@
-import React from "react";
 import ReactDOM from "react-dom";
 import "./styles/global.css";
 import * as serviceWorkerRegistration from "./utils/service-worker-registration";

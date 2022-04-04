@@ -1,17 +1,7 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
-import {
-  getAllVacationsByCompany,
-  updateVacation,
-} from "../../../../services/vacation.service";
+import { useState, useRef } from "react";
 import { VacationStatus } from "../../../../utils/enums";
 import { useSelector } from "react-redux";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import {
-  createUser,
-  deleteUser,
-  getAllUsersByCompanyId,
-} from "../../../../services/user.service";
 import { TabView, TabPanel } from "primereact/tabview";
 import VacationRequestsList from "../../../../components/VacationRequestsList";
 import UsersTable from "../../../../components/UsersTable";
@@ -26,8 +16,6 @@ import VacationTypesLegend from "../../../../components/VacationTypesLegend";
 import { vacationTypesColors } from "../../../../styles/colors";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { selectUser } from "../../../../redux/slices/user.slice";
-import VacationModel from "../../../../dtos/vacation.dto";
-import UserModel from "../../../../dtos/user.dto";
 import {
   AdminEventInfoProps,
   CreateUserFormikErrors,
@@ -36,87 +24,34 @@ import {
   UpdateVacationProps,
 } from "../../types/admin.type";
 import { toast } from "react-toastify";
+import {
+  useCreateUserMutation,
+  useDeleteUserMutation,
+  useGetAllUsersByCompanyIdQuery,
+  useGetAllVacationsByCompanyQuery,
+  useUpdateVacationMutation,
+} from "../../../../redux/baseApi";
 
 function AdminDashboard() {
   const reduxUser = useSelector(selectUser);
-  const queryClient = useQueryClient();
-  const [openAddUserDialog, setOpenAddUserDialog] =
-    React.useState<boolean>(false);
-  const [eventInfo, setEventInfo] = React.useState<AdminEventInfoProps>({
+  const [openAddUserDialog, setOpenAddUserDialog] = useState<boolean>(false);
+  const [eventInfo, setEventInfo] = useState<AdminEventInfoProps>({
     message: "",
     title: "",
   });
-  const eventInfoPanel = React.useRef<any>(null);
+  const eventInfoPanel = useRef<any>(null);
 
-  const { data: vacationsForCompany } = useQuery<Array<VacationModel>>(
-    "vacations-per-company",
-    () => getAllVacationsByCompany(reduxUser.company.id),
-    {
-      initialData: [],
-      enabled: !!reduxUser.company.id,
-    }
-  );
-  const updateVacationMutation = useMutation(
-    (requestData: UpdateVacationProps) => updateVacation(requestData),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("vacations-per-company");
-        toast("Successfully updated vacation request", {
-          type: toast.TYPE.SUCCESS,
-        });
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
-
-  const { data: allCompanyUsers } = useQuery<Array<UserModel>>(
-    "all-company-users",
-    () =>
-      getAllUsersByCompanyId(reduxUser.company.id).then(
-        (response) => response.users
-      ),
-    {
-      initialData: [],
-      enabled: !!reduxUser?.company?.id,
-    }
-  );
-  const deleteUserMutation = useMutation(
-    (userId: string) => deleteUser(userId),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("all-company-users");
-        toast("Successfully removed user", {
-          type: toast.TYPE.SUCCESS,
-        });
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
-  const createUserMutation = useMutation(
-    (user: CreateUserProps) => createUser(user),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("all-company-users");
-        setOpenAddUserDialog(false);
-        toast("Successfully created user", {
-          type: toast.TYPE.SUCCESS,
-        });
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
+  const { data: vacationsForCompany, refetch: refetchVacationsForCompany } =
+    useGetAllVacationsByCompanyQuery(reduxUser?.company?.id, {
+      skip: !reduxUser?.company?.id,
+    });
+  const { data: allCompanyUsers, refetch: refetchAllCompanyUsers } =
+    useGetAllUsersByCompanyIdQuery(reduxUser?.company?.id, {
+      skip: !reduxUser?.company?.id,
+    });
+  const [updateVacation] = useUpdateVacationMutation();
+  const [createUser] = useCreateUserMutation();
+  const [deleteUser] = useDeleteUserMutation();
 
   const pendingVacations =
     vacationsForCompany?.filter(
@@ -156,7 +91,18 @@ function AdminDashboard() {
         break;
     }
 
-    updateVacationMutation.mutate(requestData);
+    updateVacation(requestData)
+      .then(() => {
+        refetchVacationsForCompany();
+        toast("Successfully updated vacation request", {
+          type: toast.TYPE.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      });
   }
 
   function handleCreateUser(
@@ -169,7 +115,37 @@ function AdminDashboard() {
       companyName: reduxUser.company.name,
     };
 
-    createUserMutation.mutate(user, { onSettled: () => setSubmitting(false) });
+    createUser(user)
+      .then(() => {
+        refetchAllCompanyUsers();
+        setOpenAddUserDialog(false);
+        toast("Successfully created user", {
+          type: toast.TYPE.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  }
+
+  function handleRemoveUser(userId: string): void {
+    deleteUser(userId)
+      .then(() => {
+        refetchAllCompanyUsers();
+        toast("Successfully removed user", {
+          type: toast.TYPE.SUCCESS,
+        });
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      });
   }
 
   return (
@@ -229,7 +205,7 @@ function AdminDashboard() {
           <UsersTable
             users={activeCompanyUsers}
             addUser={() => setOpenAddUserDialog(true)}
-            removeUser={deleteUserMutation.mutate}
+            removeUser={handleRemoveUser}
           />
         </TabPanel>
       </TabView>

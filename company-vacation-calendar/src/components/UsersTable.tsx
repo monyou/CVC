@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { useState, FC } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -18,18 +18,12 @@ import { Button } from "primereact/button";
 type UsersTableProps = {
   users: Array<UserModel>;
   addUser: any;
-  removeUser: any;
+  removeUser: (userId: string) => void;
 };
 
-const UsersTable: React.FC<UsersTableProps> = ({
-  users,
-  addUser,
-  removeUser,
-}) => {
-  const [globalFilter, setGlobalFilter] = React.useState<string>("");
-  const [expandedRows, setExpandedRows] = React.useState<UserModel | null>(
-    null
-  );
+const UsersTable: FC<UsersTableProps> = ({ users, addUser, removeUser }) => {
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [expandedRows, setExpandedRows] = useState<UserModel | null>(null);
 
   const tableHeader = (
     <div

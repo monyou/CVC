@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import { useParams, useHistory } from "react-router-dom";
-import { activateUser } from "../../../../services/user.service";
 import { Card } from "primereact/card";
 import { ProgressSpinner } from "primereact/progressspinner";
 import { InputText } from "primereact/inputtext";
@@ -12,7 +10,6 @@ import {
   isSmallDeviceMediaQuery,
   PrimeButton,
 } from "../../../../styles/common";
-import { login } from "../../../../services/auth.service";
 import { loginUser } from "../../../../redux/slices/user.slice";
 import { useDispatch } from "react-redux";
 import {
@@ -23,11 +20,16 @@ import {
   LoginProps,
 } from "../../types/auth.type";
 import { toast } from "react-toastify";
+import {
+  useActivateUserMutation,
+  useLoginMutation,
+} from "../../../../redux/baseApi";
 
 function ActivateUser() {
   const dispatch = useDispatch();
   const { email, id, securityKey } = useParams<ActivateUserParamsProps>();
-
+  const [activateUser] = useActivateUserMutation();
+  const [login] = useLoginMutation();
   const routeHistory = useHistory();
 
   function handleFormSubmit(
@@ -40,9 +42,9 @@ function ActivateUser() {
     activateUser(activateBody).then(
       () => {
         login(loginBody).then(
-          (u) => {
+          (u: any) => {
             setSubmitting(false);
-            dispatch(loginUser(u));
+            dispatch(loginUser(u.data));
             routeHistory.push("/");
           },
           (error) => {

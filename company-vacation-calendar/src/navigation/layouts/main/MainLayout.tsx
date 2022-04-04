@@ -1,23 +1,21 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { FC } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   PrimeSmallButton,
   isSmallDevice,
   smallIconButton,
 } from "../../../styles/common";
-import { getUserFromToken } from "../../../services/auth.service";
 import { useHistory } from "react-router-dom";
-import { useQueryClient } from "react-query";
 import { selectUser, logoutUser } from "../../../redux/slices/user.slice";
 import { ToastContainer } from "react-toastify";
 import cvcLogo from "../../../assets/logos/calendar.png";
+import { getUserFromToken } from "../../../utils/common";
 
-const MainLayout: React.FC = ({ children }) => {
+const MainLayout: FC = ({ children }) => {
   const routeHistory = useHistory();
   const reduxUser = useSelector(selectUser);
   const dispatch = useDispatch();
-  const queryClient = useQueryClient();
 
   return (
     <>
@@ -54,7 +52,6 @@ const MainLayout: React.FC = ({ children }) => {
             className="p-button-rounded"
             onClick={() => {
               dispatch(logoutUser());
-              queryClient.clear();
               routeHistory.push("/login");
             }}
           />

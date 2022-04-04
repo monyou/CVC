@@ -1,32 +1,26 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
-import { useQuery } from "react-query";
-import { getAllVacationTypes } from "../services/vacation.service";
+import { FC } from "react";
 import { isSmallDevice, isSmallDeviceMediaQuery } from "../styles/common";
 import { vacationTypesColors } from "../styles/colors";
 import { Tooltip } from "primereact/tooltip";
 import VacationTypeModel from "../dtos/vacationType.dto";
+import { useGetAllVacationTypesQuery } from "../redux/baseApi";
 
 type VacationTypesLegendProps = {
   vacationTypes?: Array<VacationTypeModel>;
 };
 
-const VacationTypesLegend: React.FC<VacationTypesLegendProps> = ({
+const VacationTypesLegend: FC<VacationTypesLegendProps> = ({
   vacationTypes,
 }) => {
-  const { data: newVacationTypes, isLoading } = useQuery<
-    Array<VacationTypeModel>
-  >(
-    "vacation-types",
-    () => getAllVacationTypes().then((data) => data.vacationTypes),
-    {
-      enabled: !vacationTypes,
-    }
+  const { data: newVacationTypes, isFetching } = useGetAllVacationTypesQuery(
+    undefined,
+    { skip: !!vacationTypes }
   );
 
   const vacationTypesToShow = vacationTypes || newVacationTypes;
 
-  if (isLoading) {
+  if (isFetching) {
     return <div>Loading vacation types legend...</div>;
   } else {
     return (

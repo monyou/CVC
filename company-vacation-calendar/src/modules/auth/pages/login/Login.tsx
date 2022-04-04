@@ -1,7 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import { useHistory } from "react-router-dom";
-import { login } from "../../../../services/auth.service";
 import { InputText } from "primereact/inputtext";
 import { centerDivOnScreen, PrimeButton } from "../../../../styles/common";
 import { Formik } from "formik";
@@ -15,8 +13,10 @@ import {
   LoginProps,
 } from "../../types/auth.type";
 import { toast } from "react-toastify";
+import { useLoginMutation } from "../../../../redux/baseApi";
 
 function Login() {
+  const [login] = useLoginMutation();
   const dispatch = useDispatch();
   const routeHistory = useHistory();
 
@@ -26,9 +26,9 @@ function Login() {
   ): void {
     const loginBody: LoginProps = { ...values };
     login(loginBody).then(
-      (u) => {
+      (u: any) => {
         setSubmitting(false);
-        dispatch(loginUser(u));
+        dispatch(loginUser(u.data));
         routeHistory.push("/");
       },
       (error) => {

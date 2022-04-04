@@ -1,5 +1,4 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
 import {
   centerDivOnScreen,
   inputGroupWithError,
@@ -11,8 +10,6 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import { InputText } from "primereact/inputtext";
 import { Formik } from "formik";
 import { useHistory } from "react-router";
-import { subscribe } from "../../../../services/auth.service";
-import { useMutation } from "react-query";
 import { Divider } from "primereact/divider";
 import { toast } from "react-toastify";
 import {
@@ -20,27 +17,11 @@ import {
   SubscribeFormikProps,
   SubscribeProps,
 } from "../../types/auth.type";
+import { useSubscribeMutation } from "../../../../redux/baseApi";
 
 function Subscribe() {
+  const [subscribe] = useSubscribeMutation();
   const routeHistory = useHistory();
-
-  const subscribeClientMutation = useMutation(
-    (data: SubscribeProps) => subscribe(data),
-    {
-      onSuccess: () => {
-        routeHistory.replace("/welcome");
-        toast(
-          "Your subscription was sent to the platform admins for review. You will receive an email with instructions when they confirm it!",
-          { type: toast.TYPE.INFO }
-        );
-      },
-      onError: (error: any) => {
-        toast(error.message, {
-          type: toast.TYPE.ERROR,
-        });
-      },
-    }
-  );
 
   function handleFormSubmit(
     values: SubscribeFormikProps,
@@ -51,11 +32,22 @@ function Subscribe() {
       bulstat: +values.bulstat,
       yearVacationLimit: +values.yearVacationLimit,
     };
-    subscribeClientMutation.mutate(subscribeBody, {
-      onSettled: () => {
+    subscribe(subscribeBody)
+      .then(() => {
+        routeHistory.replace("/welcome");
+        toast(
+          "Your subscription was sent to the platform admins for review. You will receive an email with instructions when they confirm it!",
+          { type: toast.TYPE.INFO }
+        );
+      })
+      .catch((error) => {
+        toast(error.message, {
+          type: toast.TYPE.ERROR,
+        });
+      })
+      .finally(() => {
         setSubmitting(false);
-      },
-    });
+      });
   }
 
   return (

@@ -1,6 +1,6 @@
-import React from "react";
+import { FC } from "react";
 import { Switch, Route, Redirect } from "react-router-dom";
-import { getToken, logout, getUserFromToken } from "../services/auth.service";
+import { getToken, logout, getUserFromToken } from "../utils/common";
 import { Roles } from "../utils/enums";
 import Welcome from "../modules/home/pages/welcome/Welcome";
 import Login from "../modules/auth/pages/login/Login";
@@ -13,7 +13,7 @@ import UserDashboard from "../modules/user/pages/dashboard/UserDashboard";
 import AdminDashboard from "../modules/admin/pages/dashboard/AdminDashboard";
 import CustomLayout from "./layouts/custom/CustomLayout";
 
-const RouterConfig: React.FC = (): React.ReactElement => {
+const RouterConfig: FC = (): React.ReactElement => {
   return (
     <Switch>
       <Redirect exact from="/" to="/welcome" />

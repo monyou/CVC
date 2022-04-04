@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React from "react";
+import { useState, FC } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
@@ -20,19 +20,17 @@ type CompaniesWithUsersTableProps = {
   companies: Array<CompanyModel>;
   users: Array<UserModel>;
   addCompany: any;
-  removeCompany: any;
+  removeCompany: (companyId: string) => void;
 };
 
-const CompaniesWithUsersTable: React.FC<CompaniesWithUsersTableProps> = ({
+const CompaniesWithUsersTable: FC<CompaniesWithUsersTableProps> = ({
   companies,
   users,
   addCompany,
   removeCompany,
 }) => {
-  const [globalFilter, setGlobalFilter] = React.useState<string>("");
-  const [expandedRows, setExpandedRows] = React.useState<UserModel | null>(
-    null
-  );
+  const [globalFilter, setGlobalFilter] = useState<string>("");
+  const [expandedRows, setExpandedRows] = useState<UserModel | null>(null);
 
   const tableData: Array<CompaniesWithUsersTableDataModel> = companies.map(
     (c: CompanyModel) =>
